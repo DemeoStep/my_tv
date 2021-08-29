@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'search.dart';
 
 class Menu extends StatelessWidget {
   final rezka;
@@ -10,7 +11,7 @@ class Menu extends StatelessWidget {
 
   Menu({required this.rezka, required this.searchResult});
 
-  void indexChange(int newIndex) {
+  void indexChange(int newIndex, BuildContext context) {
     //if (newIndex == index) return;
 
     searchResult.selectFilm(index: -1);
@@ -19,7 +20,8 @@ class Menu extends StatelessWidget {
     switch (newIndex) {
       case 0:
         {
-          rezka.doSearch(result: searchResult, query: 'безумный макс');
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Search('')));
+          //rezka.doSearch(result: searchResult, query: 'безумный макс');
           break;
         }
       case 1:
@@ -118,25 +120,25 @@ class Menu extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Button(text: 'Поиск', index: 0),
-        Button(text: 'Новинки каталога', index: 1),
+        Button(text: 'Поиск', index: 0, context: context),
+        Button(text: 'Новинки каталога', index: 1, context: context ),
         category('Фильмы'),
-        Button(text: 'Новинки каталога', index: 2),
-        Button(text: 'Популярные', index: 3),
-        Button(text: 'Сейчас смотрят', index: 4),
+        Button(text: 'Новинки каталога', index: 2, context: context),
+        Button(text: 'Популярные', index: 3, context: context),
+        Button(text: 'Сейчас смотрят', index: 4, context: context),
         category('Сериалы'),
-        Button(text: 'Новинки каталога', index: 5),
-        Button(text: 'Популярные', index: 6),
-        Button(text: 'Сейчас смотрят', index: 7),
+        Button(text: 'Новинки каталога', index: 5, context: context),
+        Button(text: 'Популярные', index: 6, context: context),
+        Button(text: 'Сейчас смотрят', index: 7, context: context),
         category('Мультфильмы'),
-        Button(text: 'Новинки каталога', index: 8),
-        Button(text: 'Популярные', index: 9),
-        Button(text: 'Сейчас смотрят', index: 10),
+        Button(text: 'Новинки каталога', index: 8, context: context),
+        Button(text: 'Популярные', index: 9, context: context),
+        Button(text: 'Сейчас смотрят', index: 10, context: context),
       ],
     );
   }
 
-  Widget Button({required String text, required int index}) {
+  Widget Button({required String text, required int index, required BuildContext context}) {
     return Expanded(
       child: Container(
         child: OutlinedButton(
@@ -146,7 +148,7 @@ class Menu extends StatelessWidget {
             //onPrimary: Color(0xFF008087),
           ),
           onPressed: () {
-            indexChange(index);
+            indexChange(index, context);
           },
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
