@@ -10,10 +10,16 @@ class Search extends StatelessWidget {
   Search(this._searchQuery)
       : onQuery = BehaviorSubject<String>.seeded(_searchQuery);
 
-  void queryChange(String query) {
-    onQuery.add(query);
-    _searchQuery = query;
-    print(query);
+  void queryAdd(String query) {
+    onQuery.add(_searchQuery + query);
+    _searchQuery += query;
+  }
+
+  void queryBackspace() {
+    if(_searchQuery.length > 0) {
+      _searchQuery = _searchQuery.substring(0, _searchQuery.length - 1);
+      onQuery.add(_searchQuery);
+    }
   }
 
   @override
@@ -29,27 +35,34 @@ class Search extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
-                      flex: 2,
+                      flex: 6,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Container(
-                              color: Colors.deepPurple,
-                              child: Text(string),
+                              margin: EdgeInsets.only(left: 10, top: 15),
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.teal.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(5),
+                                // border: Border.all(width: 1, color: Colors.teal),
+                              ),
+                              child: Text(string, style: TextStyle(fontSize: 20, color: Colors.white),),
                             ),
                           ),
                           Expanded(
                             child: Container(
                               margin: EdgeInsets.only(left: 10),
-                              child: Keyboard(),
+                              child: Keyboard(this, Keyboard.cyr!),
                             ),
                           ),
                         ],
                       ),
                     ),
                     Expanded(
-                      flex: 3,
+                      flex: 10,
                       child: Container(),
                     ),
                   ]);

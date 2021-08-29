@@ -1,15 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
+import 'search.dart';
 
 class Keyboard extends StatelessWidget {
-  Keyboard({Key? key}) : super(key: key);
+  Search searchQuery;
+  bool isCyr = true;
+  static bool? cyr = true;
+
+  BehaviorSubject<bool> onKeyboard;
+
+  Keyboard(this.searchQuery, this.isCyr) : onKeyboard = BehaviorSubject<bool>.seeded(isCyr);
+
+  void onKeyboardChange() {
+    isCyr = !isCyr;
+    onKeyboard.add(isCyr);
+    cyr = isCyr;
+  }
 
   var cyrKeys = [
     'а',
     'б',
     'в',
     'г',
-    'ґ',
     'д',
     'е',
     'ё',
@@ -44,101 +57,146 @@ class Keyboard extends StatelessWidget {
     'я',
   ];
 
+  var engKeys = [
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h',
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+  ];
+
   Widget button(String text) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.zero,
         side: BorderSide.none,
       ),
-      onPressed: () {},
+      onPressed: () {
+        searchQuery.queryAdd(text);
+      },
       child: Text(
         text,
         maxLines: 1,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontSize: 20),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 4,
-          child: Container(
-            padding: EdgeInsets.only(left: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    padding: EdgeInsets.only(top: 5),
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        //childAspectRatio: 0.57,
-                        crossAxisCount: 10,
-                        mainAxisSpacing: 5,
-                        crossAxisSpacing: 5,
-                      ),
-                      itemCount: cyrKeys.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          alignment: Alignment.center,
-                          child: button(cyrKeys[index]),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Column(
+    return StreamBuilder<bool>(
+      stream: onKeyboard,
+      builder: (context, snapshot) {
+        var keys = isCyr ? cyrKeys : engKeys;
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Container(
+                padding: EdgeInsets.only(left: 10),
+                child: Row(
                   children: [
-                    IconButton(
-                      padding: EdgeInsets.all(0),
-                      focusColor: Colors.blueGrey,
-                      splashRadius: 16,
-                      splashColor: Colors.greenAccent,
-                      icon: Icon(
-                        Icons.keyboard_voice,
-                        size: 16,
-                        color: Colors.white,
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.only(top: 5),
+                        child: GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            //childAspectRatio: 0.57,
+                            crossAxisCount: 9,
+                            mainAxisSpacing: 5,
+                            crossAxisSpacing: 5,
+                          ),
+                          itemCount: keys.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              alignment: Alignment.center,
+                              child: button(keys[index]),
+                            );
+                          },
+                        ),
                       ),
-                      onPressed: () {},
                     ),
-                    IconButton(
-                      padding: EdgeInsets.all(0),
-                      focusColor: Colors.blueGrey,
-                      splashRadius: 16,
-                      splashColor: Colors.greenAccent,
-                      icon: Icon(
-                        Icons.backspace_rounded,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      padding: EdgeInsets.all(0),
-                      focusColor: Colors.blueGrey,
-                      splashRadius: 16,
-                      splashColor: Colors.greenAccent,
-                      icon: Icon(
-                        Icons.language,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {},
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.keyboard_voice,
+                            color: Colors.white,
+                          ),
+                          splashRadius: 20,
+                          iconSize: 20,
+                          onPressed: () {},
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.backspace_rounded,
+                            color: Colors.white,
+                          ),
+                          splashRadius: 20,
+                          iconSize: 20,
+                          onPressed: () {
+                            searchQuery.queryBackspace();
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.language,
+                            color: Colors.white,
+                          ),
+                          splashRadius: 20,
+                          iconSize: 20,
+                          onPressed: () {
+                            onKeyboardChange();
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.space_bar,
+                            color: Colors.white,
+                          ),
+                          splashRadius: 20,
+                          iconSize: 20,
+                          onPressed: () {
+                            searchQuery.queryAdd(' ');
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      }
     );
   }
 }
