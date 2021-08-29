@@ -3,6 +3,7 @@
     package="com.example.my_tv">
    <application
         android:label="my_tv"
+        android:banner="@drawable/banner"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
