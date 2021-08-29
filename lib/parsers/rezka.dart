@@ -1,0 +1,118 @@
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' as html_parser;
+import 'package:my_tv/searchResult.dart';
+import 'package:my_tv/film.dart';
+
+class Rezka {
+  static final searchUrl =
+      'https://hdrezka.co/search/?do=search&subaction=search&q=';
+
+  static final newUrl = 'http://hdrezka.co/page/1/?filter=last';
+
+  Future<void> makeSearch(String query, SearchResult result) async {
+    result.list.clear();
+    var url = Uri.parse(searchUrl + query);
+
+    await parse(url, result);
+  }
+
+  Future<void> showNew(SearchResult result) async {
+    result.list.clear();
+    for (var v = 1; v < 5; v++) {
+      var url = Uri.parse('http://hdrezka.co/page/$v/?filter=last');
+
+      await parse(url, result);
+    }
+  }
+
+  Future<void> doSearch(
+      {required SearchResult result, required String query}) async {
+    result.list.clear();
+    var url = Uri.parse(
+        'http://hdrezka.co/search/?do=search&subaction=search&q=$query');
+    await parse(url, result);
+  }
+
+  Future<void> showType(
+      {required SearchResult result,
+      required String type,
+      required String filter}) async {
+    result.list.clear();
+    for (var v = 1; v < 5; v++) {
+      var url = Uri.parse('https://hdrezka.co/$type/page/$v/?$filter');
+
+      await parse(url, result);
+    }
+  }
+
+  Future<void> parse(Uri url, SearchResult result) async {
+    var response = await http.get(url);
+    final document = html_parser.parse(response.body);
+    var links = document.getElementsByClassName('b-content__inline_item');
+
+    for (var element in links) {
+      var film = Film.newFilm();
+      var link = element.children;
+
+      for (var str in link) {
+        var item = str.outerHtml;
+        var imageUrl;
+        var name;
+        var year;
+        var country;
+        var genre;
+        var type;
+        var url;
+
+        if (item.contains('<img src=')) {
+          imageUrl = item
+              .substring(item.indexOf('<img src="'), item.indexOf('" height='))
+              .replaceAll('<img src="', '');
+          film.setPoster(imageUrl);
+
+          type = item
+              .substring(
+                  item.indexOf('"entity">'), item.indexOf('<i class="icon">'))
+              .replaceAll('"entity">', '')
+              .replaceAll('</i>', '');
+          film.setType(type);
+
+          url = item
+              .substring(item.indexOf('href='), item.indexOf('"> <img'))
+              .replaceAll('href="', '');
+
+          film.setUrl(url);
+        }
+
+        if (!item.contains('<img src=')) {
+          name = item
+              .substring(item.indexOf('.html">'), item.indexOf('</a>'))
+              .replaceAll('.html">', '');
+          film.setName(name);
+
+          var string = item
+              .substring(item.indexOf('<div>'), item.indexOf('</div>'))
+              .replaceAll('<div>', '');
+
+          year = int.parse(string.substring(0, 4));
+          film.setYear(year);
+
+          string = string
+              .replaceAll(string.substring(0, string.indexOf(',')), '')
+              .replaceFirst(', ', '');
+
+          if (string.contains(',')) {
+            country = string.substring(1, string.lastIndexOf(','));
+            film.setCountry(country);
+            genre = string.replaceAll(country + ', ', '');
+          } else {
+            genre = string;
+          }
+
+          film.setGenre([genre]);
+        }
+      }
+      result.filmAdd(film);
+    }
+  }
+}
