@@ -21,7 +21,6 @@ class Menu extends StatelessWidget {
       case 0:
         {
           Navigator.push(context, MaterialPageRoute(builder: (context) => Search('')));
-          //rezka.doSearch(result: searchResult, query: 'безумный макс');
           break;
         }
       case 1:

@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:my_tv/film.dart';
 import 'dart:convert';
-import 'package:my_tv/searchResult.dart';
+import 'package:my_tv/searchResultsList.dart';
 
 class TMDB {
   final String apiKey = 'api_key=d1ba7d3fec5a577bb81519def72d8e65';
@@ -34,7 +34,7 @@ class TMDB {
   void search(
       {required String type,
       required String query,
-      required SearchResult result}) async {
+      required SearchResultsList result}) async {
     var url = Uri.parse(
         'https://api.themoviedb.org/3/search/$type?query=$query&language=ru');
 
@@ -55,7 +55,7 @@ class TMDB {
   void list(
       {required String type,
       required String category,
-      required SearchResult result}) async {
+      required SearchResultsList result}) async {
     var url =
         Uri.parse('https://api.themoviedb.org/3/$type/$category?&language=ru');
 
@@ -73,7 +73,7 @@ class TMDB {
   }
 
   void filmAdd(
-      {required var item, required SearchResult result, required String type}) {
+      {required var item, required SearchResultsList result, required String type}) {
     Film film = Film.newFilm();
     film.setName(item['title']);
     if (item['poster_path'] != null) {

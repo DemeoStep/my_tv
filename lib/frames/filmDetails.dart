@@ -23,91 +23,97 @@ class filmDetails extends StatelessWidget {
       film.isLoaded(true);
     });
 
-    return StreamBuilder<bool>(
-        stream: film.onLoad,
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              Container(
-                alignment: Alignment.topCenter,
-                color: Colors.grey.shade900,
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Image.network(
-                        film.poster,
-                        alignment: Alignment.topLeft,
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${film.name} (${film.year})',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Divider(
-                              color: Colors.grey.shade600,
-                            ),
-                            Text(
-                              film.rate != ''
-                                  ? 'Жанр: ${film.genres.toString().replaceAll('[', '').replaceAll(']', '')}' +
-                                      '\nРейтинг ${film.rate}'
-                                  : 'Жанр: ${film.genres.toString().replaceAll('[', '').replaceAll(']', '')}',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Divider(
-                              color: Colors.grey.shade600,
-                            ),
-                            Text(
-                              film.description,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Divider(
-                              color: Colors.grey.shade600,
-                            ),
-                          ],
+    return Scaffold(
+      body: StreamBuilder<bool>(
+          stream: film.onLoad,
+          builder: (context, snapshot) {
+            return Column(
+              children: [
+                Container(
+                  alignment: Alignment.topCenter,
+                  color: Colors.grey.shade900,
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        child: Image.network(
+                          film.poster,
+                          alignment: Alignment.topLeft,
                         ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${film.name} (${film.year})',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Divider(
+                                color: Colors.grey.shade600,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                    film.rate != ''
+                                        ? 'Жанр: ${film.genres.toString().replaceAll('[', '').replaceAll(']', '')}' +
+                                            '\nРейтинг ${film.rate}'
+                                        : 'Жанр: ${film.genres.toString().replaceAll('[', '').replaceAll(']', '')}',
+                                    style: TextStyle(color: Colors.white),
+                                ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      'Страна: ${film.country}\n ',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ]
+                              ),
+                              Divider(
+                                color: Colors.grey.shade600,
+                              ),
+                              Text(
+                                film.description,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Divider(
+                                color: Colors.grey.shade600,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                child: TextButton(
-                  child: Text('Play'),
-                  onPressed: () {
-                    openMXPlayer();
-                  },
-                ),
-              )
-            ],
-          );
-        });
+                Container(
+                  child: film.hls.isNotEmpty
+                      ? TextButton(
+                    child: Text('Play'),
+                    onPressed: () {
+                      openMXPlayer();
+                    },
+                  ) : Text('')
+                  ,
+                )
+              ],
+            );
+          }),
+    );
   }
 
   Future<void> parse() async {
     var url = Uri.parse(film.url);
-
-    var js_url =
-        Uri.parse('http://hdrezka.co/templates/hdrezka/js/playerjs39.js?v=1');
-
-    var js_response = await http.get(js_url, headers: {
-      'Referer':
-          'http://hdrezka.co/series/melodrama/41507-primadonna-2005.html',
-      'User-Agent':
-          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36'
-    });
 
     var response = await http.get(url);
     var body = response.body;

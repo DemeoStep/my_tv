@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'keyboard.dart';
+import 'package:my_tv/parsers/rezka.dart';
+import 'package:my_tv/searchResultsList.dart';
+import 'package:my_tv/film.dart';
+import 'filmDetails.dart';
+import 'result.dart';
 
 class Search extends StatelessWidget {
   String _searchQuery;
+  var rezka = Rezka();
+  var searchResult = SearchResultsList.newSearch();
 
   BehaviorSubject<String> onQuery;
 
@@ -13,6 +20,7 @@ class Search extends StatelessWidget {
   void queryAdd(String query) {
     onQuery.add(_searchQuery + query);
     _searchQuery += query;
+    rezka.doSearch(result: searchResult, query: _searchQuery);
   }
 
   void queryBackspace() {
@@ -63,7 +71,34 @@ class Search extends StatelessWidget {
                     ),
                     Expanded(
                       flex: 10,
-                      child: Container(),
+                      child: StreamBuilder<int>(
+                          stream: searchResult.onSelect,
+                          builder: (context, snapshot) {
+                            var selected = snapshot.data ?? -1;
+                            if (selected != -1) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => filmDetails(film: searchResult.list[selected])));
+                            }
+                            return Container(
+                                child: StreamBuilder<List<Film>>(
+                                    stream: searchResult.onFilmAdd,
+                                    builder: (context, snapshot) {
+                                      var list = snapshot.data ?? [];
+                                      return GridView.builder(
+                                          gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                            childAspectRatio: 0.57,
+                                            crossAxisCount: 5,
+                                          ),
+                                          itemCount: list.length,
+                                          itemBuilder: (context, index) {
+                                            return result(
+                                              searchResult: searchResult,
+                                              index: index,
+                                            );
+                                          });
+                                    }),
+                              );
+                          }),
                     ),
                   ]);
             }),

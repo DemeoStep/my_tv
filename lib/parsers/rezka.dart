@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
-import 'package:my_tv/searchResult.dart';
+import 'package:my_tv/searchResultsList.dart';
 import 'package:my_tv/film.dart';
 
 class Rezka {
@@ -9,14 +9,14 @@ class Rezka {
 
   static final newUrl = 'http://hdrezka.co/page/1/?filter=last';
 
-  Future<void> makeSearch(String query, SearchResult result) async {
+  Future<void> makeSearch(String query, SearchResultsList result) async {
     result.list.clear();
     var url = Uri.parse(searchUrl + query);
 
     await parse(url, result);
   }
 
-  Future<void> showNew(SearchResult result) async {
+  Future<void> showNew(SearchResultsList result) async {
     result.list.clear();
     for (var v = 1; v < 5; v++) {
       var url = Uri.parse('http://hdrezka.co/page/$v/?filter=last');
@@ -26,15 +26,17 @@ class Rezka {
   }
 
   Future<void> doSearch(
-      {required SearchResult result, required String query}) async {
-    result.list.clear();
-    var url = Uri.parse(
-        'http://hdrezka.co/search/?do=search&subaction=search&q=$query');
-    await parse(url, result);
+      {required SearchResultsList result, required String query}) async {
+    if (query.length > 2) {
+      result.list.clear();
+      var url = Uri.parse(
+          'http://hdrezka.co/search/?do=search&subaction=search&q=$query');
+      await parse(url, result);
+    }
   }
 
   Future<void> showType(
-      {required SearchResult result,
+      {required SearchResultsList result,
       required String type,
       required String filter}) async {
     result.list.clear();
@@ -45,7 +47,7 @@ class Rezka {
     }
   }
 
-  Future<void> parse(Uri url, SearchResult result) async {
+  Future<void> parse(Uri url, SearchResultsList result) async {
     var response = await http.get(url);
     final document = html_parser.parse(response.body);
     var links = document.getElementsByClassName('b-content__inline_item');
@@ -102,7 +104,7 @@ class Rezka {
               .replaceFirst(', ', '');
 
           if (string.contains(',')) {
-            country = string.substring(1, string.lastIndexOf(','));
+            country = string.substring(0, string.lastIndexOf(','));
             film.setCountry(country);
             genre = string.replaceAll(country + ', ', '');
           } else {
