@@ -24,10 +24,13 @@ class filmDetails extends StatelessWidget {
     });
 
     return Scaffold(
+      backgroundColor: Colors.grey.shade900,
       body: StreamBuilder<bool>(
           stream: film.onLoad,
           builder: (context, snapshot) {
             return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   alignment: Alignment.topCenter,
@@ -97,9 +100,15 @@ class filmDetails extends StatelessWidget {
                   ),
                 ),
                 Container(
+                  margin: EdgeInsets.only(left: 10),
+                  width: 165,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: film.hls.isNotEmpty
                       ? TextButton(
-                    child: Text('Play'),
+                    child: Text('PLAY'),
                     onPressed: () {
                       openMXPlayer();
                     },
