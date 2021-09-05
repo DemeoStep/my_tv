@@ -1,13 +1,16 @@
-import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
 import 'package:my_tv/searchResultsList.dart';
 import 'package:my_tv/film.dart';
 
 class Rezka {
-  static final searchUrl =
-      'https://hdrezka.co/search/?do=search&subaction=search&q=';
+  final http;
 
-  static final newUrl = 'http://hdrezka.co/page/1/?filter=last';
+  Rezka({required this.http});
+
+  static final host = 'hdrezka.co';
+
+  static final searchUrl =
+      'http://$host/search/?do=search&subaction=search&q=';
 
   Future<void> makeSearch(String query, SearchResultsList result) async {
     result.list.clear();
@@ -19,7 +22,7 @@ class Rezka {
   Future<void> showNew(SearchResultsList result) async {
     result.list.clear();
     for (var v = 1; v < 5; v++) {
-      var url = Uri.parse('http://hdrezka.co/page/$v/?filter=last');
+      var url = Uri.parse('http://$host/page/$v/?filter=last');
 
       await parse(url, result);
     }
@@ -30,7 +33,7 @@ class Rezka {
     if (query.length > 2) {
       result.list.clear();
       var url = Uri.parse(
-          'http://hdrezka.co/search/?do=search&subaction=search&q=$query');
+          'http://$host/search/?do=search&subaction=search&q=$query');
       await parse(url, result);
     }
   }
@@ -41,7 +44,7 @@ class Rezka {
       required String filter}) async {
     result.list.clear();
     for (var v = 1; v < 5; v++) {
-      var url = Uri.parse('https://hdrezka.co/$type/page/$v/?$filter');
+      var url = Uri.parse('http://$host/$type/page/$v/?$filter');
 
       await parse(url, result);
     }
@@ -60,6 +63,7 @@ class Rezka {
         var item = str.outerHtml;
         var imageUrl;
         var name;
+        var id;
         var year;
         var country;
         var genre;
@@ -85,6 +89,11 @@ class Rezka {
 
           film.setUrl(url);
         }
+
+        id = film.url
+            .substring(film.url.lastIndexOf('/'), film.url.indexOf('-'))
+            .replaceAll('/', '');
+        film.setId(id);
 
         if (!item.contains('<img src=')) {
           name = item

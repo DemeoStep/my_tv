@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:my_tv/my_http.dart';
 import 'package:rxdart/rxdart.dart';
 import 'search.dart';
 
 class Menu extends StatelessWidget {
   final rezka;
   final searchResult;
+  var http;
   static int index = -1;
 
   static BehaviorSubject<int> onIndex = BehaviorSubject<int>.seeded(index);
 
-  Menu({required this.rezka, required this.searchResult});
+  Menu({required this.rezka, required this.searchResult, required this.http});
 
   void indexChange(int newIndex, BuildContext context) {
     //if (newIndex == index) return;
@@ -20,7 +22,7 @@ class Menu extends StatelessWidget {
     switch (newIndex) {
       case 0:
         {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Search('')));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Search('', rezka, http)));
           break;
         }
       case 1:

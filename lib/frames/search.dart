@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_tv/my_http.dart';
 import 'package:rxdart/rxdart.dart';
 import 'keyboard.dart';
 import 'package:my_tv/parsers/rezka.dart';
@@ -9,12 +10,13 @@ import 'result.dart';
 
 class Search extends StatelessWidget {
   String _searchQuery;
-  var rezka = Rezka();
+  var rezka;
+  var http;
   var searchResult = SearchResultsList.newSearch();
 
   BehaviorSubject<String> onQuery;
 
-  Search(this._searchQuery)
+  Search(this._searchQuery, this.rezka, this.http)
       : onQuery = BehaviorSubject<String>.seeded(_searchQuery);
 
   void queryAdd(String query) {
@@ -76,7 +78,7 @@ class Search extends StatelessWidget {
                           builder: (context, snapshot) {
                             var selected = snapshot.data ?? -1;
                             if (selected != -1) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => filmDetails(film: searchResult.list[selected])));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => filmDetails(film: searchResult.list[selected], http: http,)));
                             }
                             return Container(
                                 child: StreamBuilder<List<Film>>(
@@ -86,14 +88,15 @@ class Search extends StatelessWidget {
                                       return GridView.builder(
                                           gridDelegate:
                                           const SliverGridDelegateWithFixedCrossAxisCount(
-                                            childAspectRatio: 0.57,
-                                            crossAxisCount: 5,
+                                            childAspectRatio: 0.52,
+                                            crossAxisCount: 7,
                                           ),
                                           itemCount: list.length,
                                           itemBuilder: (context, index) {
                                             return result(
                                               searchResult: searchResult,
                                               index: index,
+                                              http: http,
                                             );
                                           });
                                     }),

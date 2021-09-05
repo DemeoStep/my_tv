@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:my_tv/frames/filmDetails.dart';
 import 'package:my_tv/searchResultsList.dart';
+import 'package:my_tv/my_http.dart';
 
 class result extends StatelessWidget {
   SearchResultsList searchResult;
   var index;
+  var http;
 
-  result({required this.searchResult, required this.index});
+  result({required this.searchResult, required this.index, required this.http});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class result extends StatelessWidget {
           padding: EdgeInsets.zero,
         ),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => filmDetails(film: searchResult.list[index])));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => filmDetails(film: searchResult.list[index], http: http,)));
           //searchResult.selectFilm(index: index);
         },
         child: Container(
@@ -46,17 +48,21 @@ class result extends StatelessWidget {
                     textDirection: TextDirection.ltr,
                     top: 3,
                     start: 3,
-                    child: Text(
-                      list[index].type,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        /* shadows: [
-                          Shadow(color: Colors.black, blurRadius: 3),
-                          Shadow(color: Colors.black, blurRadius: 3),
-                          Shadow(color: Colors.black, blurRadius: 3),
-                          Shadow(color: Colors.black, blurRadius: 3),
-                        ], */
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      color: Colors.black54,
+                      child: Text(
+                        list[index].type,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          /* shadows: [
+                            Shadow(color: Colors.black, blurRadius: 3),
+                            Shadow(color: Colors.black, blurRadius: 3),
+                            Shadow(color: Colors.black, blurRadius: 3),
+                            Shadow(color: Colors.black, blurRadius: 3),
+                          ], */
+                        ),
                       ),
                     ),
                   ),
@@ -64,17 +70,21 @@ class result extends StatelessWidget {
                     textDirection: TextDirection.ltr,
                     bottom: 2,
                     end: 2,
-                    child: Text(
-                      list[index].year.toString(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        /* shadows: [
-                          Shadow(color: Colors.black, blurRadius: 3),
-                          Shadow(color: Colors.black, blurRadius: 3),
-                          Shadow(color: Colors.black, blurRadius: 3),
-                          Shadow(color: Colors.black, blurRadius: 3),
-                        ], */
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      color: Colors.black54,
+                      child: Text(
+                        list[index].year.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          /* shadows: [
+                            Shadow(color: Colors.black, blurRadius: 3),
+                            Shadow(color: Colors.black, blurRadius: 3),
+                            Shadow(color: Colors.black, blurRadius: 3),
+                            Shadow(color: Colors.black, blurRadius: 3),
+                          ], */
+                        ),
                       ),
                     ),
                   ),

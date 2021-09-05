@@ -4,13 +4,15 @@ import 'package:my_tv/searchResultsList.dart';
 import 'menu.dart';
 import 'package:my_tv/film.dart';
 import 'result.dart';
+import 'package:my_tv/my_http.dart';
 
 class MainScreen extends StatelessWidget {
-  final rezka = Rezka();
+  final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-
   @override
   Widget build(BuildContext context) {
+    final rezka = Rezka(http: http);
+
     rezka.showNew(searchResult);
     Menu.index = 0;
 
@@ -26,6 +28,7 @@ class MainScreen extends StatelessWidget {
                     return Menu(
                       rezka: rezka,
                       searchResult: searchResult,
+                      http: http,
                     );
                   }),
               decoration: BoxDecoration(
@@ -51,6 +54,7 @@ class MainScreen extends StatelessWidget {
                           return result(
                             searchResult: searchResult,
                             index: index,
+                            http: http,
                           );
                         });
                   }),
