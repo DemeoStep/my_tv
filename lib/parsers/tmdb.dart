@@ -73,7 +73,9 @@ class TMDB {
   }
 
   void filmAdd(
-      {required var item, required SearchResultsList result, required String type}) {
+      {required var item,
+      required SearchResultsList result,
+      required String type}) {
     Film film = Film.newFilm();
     film.setName(item['title']);
     if (item['poster_path'] != null) {

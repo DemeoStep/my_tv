@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 
-class Episode{
+class Episode {
   String _episode = '';
 
   Episode({required String episode}) {

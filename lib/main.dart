@@ -7,7 +7,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Shortcuts(
@@ -15,19 +14,18 @@ class MyApp extends StatelessWidget {
         LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
       },
       child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'My TV',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+        debugShowCheckedModeBanner: false,
+        title: 'My TV',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MyHomePage(),
       ),
-      home: MyHomePage(),
-    ),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

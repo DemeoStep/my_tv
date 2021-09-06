@@ -123,44 +123,51 @@ class filmDetails extends StatelessWidget {
                 );
               }),
           StreamBuilder<List<Translator>>(
-            stream: film.onTranslators,
-            builder: (context, snapshot) {
-              var list = snapshot.data ?? [];
-              return ListView.separated(
-                padding: EdgeInsets.all(8),
-                itemCount: list.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.grey.shade800,
-                      padding: EdgeInsets.zero,
-                      side: BorderSide.none,
-                    ),
-                    onPressed: () {
-                      film.type == 'Сериал'
-                          ? Navigator.push(context, MaterialPageRoute(builder: (context) => SeasonsScreen(film: film, http: http, translator: list[index], seasonSelected: 0,)))
-                          : playFilm(list[index].id);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
+              stream: film.onTranslators,
+              builder: (context, snapshot) {
+                var list = snapshot.data ?? [];
+                return ListView.separated(
+                  padding: EdgeInsets.all(8),
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey.shade800,
+                        padding: EdgeInsets.zero,
+                        side: BorderSide.none,
                       ),
-                      alignment: Alignment.centerLeft,
-                      height: 50,
-                      child: Text(
-                        '${list[index].name}',
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                        textAlign: TextAlign.left,
+                      onPressed: () {
+                        film.type == 'Сериал'
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SeasonsScreen(
+                                          film: film,
+                                          http: http,
+                                          translator: list[index],
+                                          seasonSelected: 0,
+                                        )))
+                            : playFilm(list[index].id);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        alignment: Alignment.centerLeft,
+                        height: 50,
+                        child: Text(
+                          '${list[index].name}',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
-              );
-            }
-          ),
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
+                );
+              }),
           Text('Торренты', style: TextStyle(color: Colors.white)),
         ]),
       ),
@@ -173,11 +180,11 @@ class filmDetails extends StatelessWidget {
       await serialParse();
     } else {
       var serial = await isSerial();
-      if(serial) {
+      if (serial) {
         film.setType('Сериал');
         await serialParse();
       } else
-      await filmParse();
+        await filmParse();
     }
   }
 
@@ -192,11 +199,16 @@ class filmDetails extends StatelessWidget {
 
   Future<void> serialParse() async {
     film.translatorsList.clear();
-    for(var trans in film.translators) {
+    for (var trans in film.translators) {
       var translator = Translator();
-      getSeasonsCount(trans.keys.toString().replaceAll('(', '').replaceAll(')', ''), translator).then((value) {
-        translator.setName(trans.values.toString().replaceAll('(', '').replaceAll(')', ''));
-        translator.setId(trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
+      getSeasonsCount(
+              trans.keys.toString().replaceAll('(', '').replaceAll(')', ''),
+              translator)
+          .then((value) {
+        translator.setName(
+            trans.values.toString().replaceAll('(', '').replaceAll(')', ''));
+        translator.setId(
+            trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
         film.addTranslator(translator);
       });
     }
@@ -204,14 +216,14 @@ class filmDetails extends StatelessWidget {
 
   Future<void> filmParse() async {
     film.translatorsList.clear();
-    for(var trans in film.translators) {
+    for (var trans in film.translators) {
       var translator = Translator();
 
-
-      translator.setName(trans.values.toString().replaceAll('(', '').replaceAll(')', ''));
-      translator.setId(trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
+      translator.setName(
+          trans.values.toString().replaceAll('(', '').replaceAll(')', ''));
+      translator
+          .setId(trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
       film.addTranslator(translator);
-
     }
   }
 
@@ -219,13 +231,15 @@ class filmDetails extends StatelessWidget {
     var date = DateTime.now().millisecondsSinceEpoch;
     var jsUrl = Uri.parse('http://hdrezka.co/ajax/get_cdn_series/?t=$date');
 
-    var cookie = http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
-    var body = 'id=${film.id}&translator_id=$translatorId&is_camrip=0&is_ads=0&is_director=0&action=get_movie';
+    var cookie =
+        http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
+    var body =
+        'id=${film.id}&translator_id=$translatorId&is_camrip=0&is_ads=0&is_director=0&action=get_movie';
 
     http.headers = {
       'Host': 'hdrezka.co',
       'User-Agent':
-      'Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0',
+          'Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0',
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
       'Accept-Encoding': 'gzip, deflate',
@@ -237,26 +251,26 @@ class filmDetails extends StatelessWidget {
       'Cookie': cookie,
     };
 
-    var jsResponse = await http.post(jsUrl,
-        body: body);
+    var jsResponse = await http.post(jsUrl, body: body);
 
     var str = jsonDecode(jsResponse.body)['url'].toString().split(',');
 
     var urls = str.last.split('or');
 
     launch(urls.last.trim());
-
   }
 
-  Future<void> getSeasonsCount(String translatorId, Translator translator) async {
-    var response = await http.get(Uri.parse('${film.url}#t:$translatorId-s:1-e:1'));
+  Future<void> getSeasonsCount(
+      String translatorId, Translator translator) async {
+    var response =
+        await http.get(Uri.parse('${film.url}#t:$translatorId-s:1-e:1'));
     var document = html_parser.parse(response.body);
 
     var seasons = document.querySelectorAll('[id^="simple-episodes-list-"]');
 
-    for(var i = 1; i <= seasons.length; i++) {
+    for (var i = 1; i <= seasons.length; i++) {
       var season = Season();
-      
+
       var episodes = document.querySelectorAll('[data-season_id^="$i"]');
       season.setCount(episodes.length);
       translator.addSeason(season);
@@ -298,8 +312,10 @@ class filmDetails extends StatelessWidget {
         }
       }
     }
-    if(translatorsMap.isEmpty) {
-      film.setTranslators([{'110' : 'Не нужен'}]);
+    if (translatorsMap.isEmpty) {
+      film.setTranslators([
+        {'110': 'Не нужен'}
+      ]);
     } else {
       film.setTranslators(translatorsMap);
     }
@@ -317,17 +333,15 @@ class filmDetails extends StatelessWidget {
         translator.setId(translatorId);
         translator.setName(translatorName);
 
-        getSeasons(translatorId, seasons, translator)
-            .then((seasonList) {
-
+        getSeasons(translatorId, seasons, translator).then((seasonList) {
           film.addTranslator(translator);
         });
       }
     }
   }
 
-  Future<void> getSeasons(String translatorId, int seasons,
-      Translator translator) async {
+  Future<void> getSeasons(
+      String translatorId, int seasons, Translator translator) async {
     for (var i = 1; i <= seasons; i++) {
       getEpisodes(translatorId, i).then((season) {
         // translator.addSeason(season);
@@ -342,8 +356,12 @@ class filmDetails extends StatelessWidget {
     var episode = 1;
 
     do {
-      var cookie = http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
-      var body = 'id=${film.id}&translator_id=$translatorId&season=$seasonNum&episode=$episode&favs=13a5841a-ba68-48f1-bea6-dd5adf9fe233&action=get_stream';
+      var cookie = http.headers.values
+          .toString()
+          .replaceAll('(', '')
+          .replaceAll(')', '');
+      var body =
+          'id=${film.id}&translator_id=$translatorId&season=$seasonNum&episode=$episode&favs=13a5841a-ba68-48f1-bea6-dd5adf9fe233&action=get_stream';
 
       http.headers = {
         'Host': 'hdrezka.co',
@@ -360,12 +378,9 @@ class filmDetails extends StatelessWidget {
         'Cookie': cookie,
       };
 
-      var jsResponse = await http.post(jsUrl,
-          body: body);
-
+      var jsResponse = await http.post(jsUrl, body: body);
 
       var urls = jsonDecode(jsResponse.body);
-
 
       if (urls != null && urls['success'] == true && urls['url'] != false) {
         var str = urls['url'].toString().split(',');
@@ -377,7 +392,6 @@ class filmDetails extends StatelessWidget {
       }
 
       episode++;
-
     } while (urls != null && urls['success'] == true && urls['url'] != false);
   }
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:my_tv/frames/filmDetails.dart';
 import 'package:my_tv/searchResultsList.dart';
-import 'package:my_tv/my_http.dart';
 
 class result extends StatelessWidget {
   SearchResultsList searchResult;
@@ -26,7 +25,13 @@ class result extends StatelessWidget {
           padding: EdgeInsets.zero,
         ),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => filmDetails(film: searchResult.list[index], http: http,)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => filmDetails(
+                        film: searchResult.list[index],
+                        http: http,
+                      )));
           //searchResult.selectFilm(index: index);
         },
         child: Container(

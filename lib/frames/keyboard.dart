@@ -5,85 +5,91 @@ import 'search.dart';
 
 class Keyboard extends StatelessWidget {
   Search searchQuery;
-  bool isCyr = true;
-  static bool? cyr = true;
+  int type = 0;
 
-  BehaviorSubject<bool> onKeyboard;
+  BehaviorSubject<int> onKeyboard;
 
-  Keyboard(this.searchQuery, this.isCyr) : onKeyboard = BehaviorSubject<bool>.seeded(isCyr);
+  Keyboard(this.searchQuery, this.type)
+      : onKeyboard = BehaviorSubject<int>.seeded(type);
 
-  void onKeyboardChange() {
-    isCyr = !isCyr;
-    onKeyboard.add(isCyr);
-    cyr = isCyr;
+  void onKeyboardChange(int type) {
+    this.type = type;
+    onKeyboard.add(type);
   }
 
   var cyrKeys = [
-    'а',
-    'б',
-    'в',
-    'г',
-    'д',
-    'е',
-    'ё',
-    'є',
-    'ж',
-    'з',
-    'и',
-    'і',
-    'ї',
-    'й',
-    'к',
-    'л',
-    'м',
-    'н',
-    'о',
-    'п',
-    'р',
-    'с',
-    'т',
-    'у',
-    'ф',
-    'х',
-    'ц',
-    'ч',
-    'ш',
-    'щ',
-    'ъ',
-    'ы',
-    'ь',
-    'э',
-    'ю',
-    'я',
+    'А',
+    'Б',
+    'В',
+    'Г',
+    'Д',
+    'Е',
+    'Ё',
+    'Є',
+    'Ж',
+    'З',
+    'И',
+    'І',
+    'Ї',
+    'Й',
+    'К',
+    'Л',
+    'М',
+    'Н',
+    'О',
+    'П',
+    'Р',
+    'С',
+    'Т',
+    'У',
+    'Ф',
+    'Х',
+    'Ц',
+    'Ч',
+    'Ш',
+    'Щ',
+    'Ъ',
+    'Ы',
+    'Ь',
+    'Э',
+    'Ю',
+    'Я',
   ];
 
   var engKeys = [
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    'g',
-    'h',
-    'i',
-    'j',
-    'k',
-    'l',
-    'm',
-    'n',
-    'o',
-    'p',
-    'q',
-    'r',
-    's',
-    't',
-    'u',
-    'v',
-    'w',
-    'x',
-    'y',
-    'z',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
+  ];
+
+  var symbolKeys = [
+    '1', '2', '3', '4', '5', '&', '#', '(', ')',
+    '6', '7', '8', '9', '0', '@', '!', '?', ':',
+    ',', '.', '_', '-', '+', '=', '/', '"', '\'',
+    '\$', '%', '*',
   ];
 
   Widget button(String text) {
@@ -93,7 +99,7 @@ class Keyboard extends StatelessWidget {
         side: BorderSide.none,
       ),
       onPressed: () {
-        searchQuery.queryAdd(text);
+        searchQuery.queryAdd(text, false);
       },
       child: Text(
         text,
@@ -106,97 +112,108 @@ class Keyboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<bool>(
-      stream: onKeyboard,
-      builder: (context, snapshot) {
-        var keys = isCyr ? cyrKeys : engKeys;
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 4,
-              child: Container(
-                padding: EdgeInsets.only(left: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.only(top: 5),
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            //childAspectRatio: 0.57,
-                            crossAxisCount: 9,
-                            mainAxisSpacing: 5,
-                            crossAxisSpacing: 5,
+    var keyTypes = [
+      cyrKeys,
+      engKeys,
+      symbolKeys
+    ];
+
+    return StreamBuilder<int>(
+        stream: onKeyboard,
+        builder: (context, snapshot) {
+          var keys = keyTypes[snapshot.data ?? 0];
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 4,
+                child: Container(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          padding: EdgeInsets.only(top: 5),
+                          child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              //childAspectRatio: 0.57,
+                              crossAxisCount: 9,
+                              mainAxisSpacing: 5,
+                              crossAxisSpacing: 5,
+                            ),
+                            itemCount: keys.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                alignment: Alignment.center,
+                                child: button(keys[index]),
+                              );
+                            },
                           ),
-                          itemCount: keys.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              alignment: Alignment.center,
-                              child: button(keys[index]),
-                            );
-                          },
                         ),
                       ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.keyboard_voice,
-                            color: Colors.white,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          IconButton(
+                            icon: Text(
+                              '?#1', style: TextStyle(
+                              color: Colors.white,
+                              ),
+                            ),
+                            splashRadius: 20,
+                            iconSize: 20,
+                            onPressed: () {
+                              onKeyboardChange(2);
+                            },
                           ),
-                          splashRadius: 20,
-                          iconSize: 20,
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.backspace_rounded,
-                            color: Colors.white,
+                          IconButton(
+                            icon: Icon(
+                              Icons.backspace_rounded,
+                              color: Colors.white,
+                            ),
+                            splashRadius: 20,
+                            iconSize: 20,
+                            onPressed: () {
+                              searchQuery.queryBackspace();
+                            },
                           ),
-                          splashRadius: 20,
-                          iconSize: 20,
-                          onPressed: () {
-                            searchQuery.queryBackspace();
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.language,
-                            color: Colors.white,
+                          IconButton(
+                            icon: Icon(
+                              Icons.language,
+                              color: Colors.white,
+                            ),
+                            splashRadius: 20,
+                            iconSize: 20,
+                            onPressed: () {
+                              onKeyboardChange(
+                                  type == 2
+                                      ? 0
+                                      : type == 1 ? 0 : 1);
+                            },
                           ),
-                          splashRadius: 20,
-                          iconSize: 20,
-                          onPressed: () {
-                            onKeyboardChange();
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.space_bar,
-                            color: Colors.white,
+                          IconButton(
+                            icon: Icon(
+                              Icons.space_bar,
+                              color: Colors.white,
+                            ),
+                            splashRadius: 20,
+                            iconSize: 20,
+                            onPressed: () {
+                              searchQuery.queryAdd(' ', false);
+                            },
                           ),
-                          splashRadius: 20,
-                          iconSize: 20,
-                          onPressed: () {
-                            searchQuery.queryAdd(' ');
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        );
-      }
-    );
+            ],
+          );
+        });
   }
 }

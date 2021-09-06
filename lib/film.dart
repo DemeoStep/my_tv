@@ -40,23 +40,38 @@ class Film {
       this._translatorsList)
       : onDescr = BehaviorSubject<String>.seeded(_description),
         onLoad = BehaviorSubject<bool>.seeded(_loaded),
-        onTranslators = BehaviorSubject<List<Translator>>.seeded(_translatorsList);
+        onTranslators =
+            BehaviorSubject<List<Translator>>.seeded(_translatorsList);
 
-  Film.newFilm() : this('', '', 0, '', [], '', '', '', '', '', '', '', false, []);
+  Film.newFilm()
+      : this('', '', 0, '', [], '', '', '', '', '', '', '', false, []);
 
   String get name => _name;
+
   String get id => _id;
+
   int get year => _year;
+
   String get country => _country;
+
   List<String> get genres => _genres;
+
   String get url => _url;
+
   String get poster => _poster;
+
   String get type => _type;
+
   String get description => _description;
+
   String get rate => _rate;
+
   String get hls => _hls;
+
   String get mp4 => _mp4;
+
   List<Map<String, String>> get translators => _translators;
+
   List<Translator> get translatorsList => _translatorsList;
 
   void descriptionChange(String description) {
@@ -127,5 +142,4 @@ class Film {
     _translatorsList.add(translator);
     onTranslators.add(_translatorsList);
   }
-  
 }

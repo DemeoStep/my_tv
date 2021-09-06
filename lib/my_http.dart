@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 
 class NetworkService {
-
   Map<String, String> headers = {};
   Map<String, String> cookies = {};
 
@@ -11,7 +10,6 @@ class NetworkService {
     String allSetCookie = response.headers['set-cookie']!;
 
     if (allSetCookie != null) {
-
       var setCookies = allSetCookie.split(',');
 
       for (var setCookie in setCookies) {
@@ -27,7 +25,6 @@ class NetworkService {
   }
 
   void _setCookie(String rawCookie) {
-
     if (rawCookie.length > 0) {
       var keyValue = rawCookie.split('=');
       if (keyValue.length == 2) {
@@ -35,8 +32,7 @@ class NetworkService {
         var value = keyValue[1];
 
         // ignore keys that aren't cookies
-        if (key == 'path' || key == 'expires')
-          return;
+        if (key == 'path' || key == 'expires') return;
 
         this.cookies[key] = value;
       }
@@ -47,8 +43,7 @@ class NetworkService {
     String cookie = "";
 
     for (var key in cookies.keys) {
-      if (cookie.length > 0)
-        cookie += ";";
+      if (cookie.length > 0) cookie += ";";
       cookie += key + "=" + cookies[key]!;
     }
     return cookie;

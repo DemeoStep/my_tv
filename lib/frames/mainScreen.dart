@@ -9,6 +9,7 @@ import 'package:my_tv/my_http.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
+
   @override
   Widget build(BuildContext context) {
     final rezka = Rezka(http: http);

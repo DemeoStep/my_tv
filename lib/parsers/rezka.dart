@@ -9,8 +9,7 @@ class Rezka {
 
   static final host = 'hdrezka.co';
 
-  static final searchUrl =
-      'http://$host/search/?do=search&subaction=search&q=';
+  static final searchUrl = 'http://$host/search/?do=search&subaction=search&q=';
 
   Future<void> makeSearch(String query, SearchResultsList result) async {
     result.list.clear();
@@ -32,8 +31,8 @@ class Rezka {
       {required SearchResultsList result, required String query}) async {
     if (query.length > 2) {
       result.list.clear();
-      var url = Uri.parse(
-          'http://$host/search/?do=search&subaction=search&q=$query');
+      var url =
+          Uri.parse('http://$host/search/?do=search&subaction=search&q=$query');
       await parse(url, result);
     }
   }

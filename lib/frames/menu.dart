@@ -22,7 +22,10 @@ class Menu extends StatelessWidget {
     switch (newIndex) {
       case 0:
         {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Search('', rezka, http)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Search('', rezka, http, false)));
           break;
         }
       case 1:
@@ -122,7 +125,7 @@ class Menu extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Button(text: 'Поиск', index: 0, context: context),
-        Button(text: 'Новинки каталога', index: 1, context: context ),
+        Button(text: 'Новинки каталога', index: 1, context: context),
         category('Фильмы'),
         Button(text: 'Новинки каталога', index: 2, context: context),
         Button(text: 'Популярные', index: 3, context: context),
@@ -139,7 +142,10 @@ class Menu extends StatelessWidget {
     );
   }
 
-  Widget Button({required String text, required int index, required BuildContext context}) {
+  Widget Button(
+      {required String text,
+      required int index,
+      required BuildContext context}) {
     return Expanded(
       child: Container(
         child: OutlinedButton(
