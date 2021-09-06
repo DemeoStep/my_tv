@@ -149,7 +149,9 @@ class Menu extends StatelessWidget {
     return Expanded(
       child: Container(
         child: OutlinedButton(
+          autofocus: index == 0 ? true : false,
           style: OutlinedButton.styleFrom(
+            primary: Colors.cyanAccent,
             elevation: 0,
             side: BorderSide.none,
             //onPrimary: Color(0xFF008087),

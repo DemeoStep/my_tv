@@ -22,6 +22,7 @@ class result extends StatelessWidget {
       ),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
+          primary: Colors.cyanAccent,
           padding: EdgeInsets.zero,
         ),
         onPressed: () {
