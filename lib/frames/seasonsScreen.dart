@@ -32,8 +32,6 @@ class SeasonsScreen extends StatelessWidget {
     var date = DateTime.now().millisecondsSinceEpoch;
     var jsUrl = Uri.parse('http://hdrezka.co/ajax/get_cdn_series/?t=$date');
 
-    print(film.url);
-
     var cookie =
         http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
     var body =

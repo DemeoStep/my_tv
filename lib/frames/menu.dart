@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_tv/my_http.dart';
 import 'package:rxdart/rxdart.dart';
 import 'search.dart';
 
@@ -14,7 +13,6 @@ class Menu extends StatelessWidget {
   Menu({required this.rezka, required this.searchResult, required this.http});
 
   void indexChange(int newIndex, BuildContext context) {
-    //if (newIndex == index) return;
 
     searchResult.selectFilm(index: -1);
     onIndex.add(newIndex);
@@ -154,7 +152,6 @@ class Menu extends StatelessWidget {
             primary: Colors.cyanAccent,
             elevation: 0,
             side: BorderSide.none,
-            //onPrimary: Color(0xFF008087),
           ),
           onPressed: () {
             indexChange(index, context);

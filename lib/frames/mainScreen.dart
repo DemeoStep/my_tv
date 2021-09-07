@@ -5,6 +5,8 @@ import 'menu.dart';
 import 'package:my_tv/film.dart';
 import 'result.dart';
 import 'package:my_tv/my_http.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
@@ -13,6 +15,10 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rezka = Rezka(http: http);
+
+    // launch('https://euronet.dn.ua/app-release.apk',
+    //     forceWebView: true,
+    // );
 
     rezka.showNew(searchResult);
     Menu.index = 0;
