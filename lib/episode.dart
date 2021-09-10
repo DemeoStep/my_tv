@@ -1,5 +1,3 @@
-import 'package:rxdart/rxdart.dart';
-
 class Episode {
   String _episode = '';
 

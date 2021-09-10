@@ -1,6 +1,6 @@
 import 'film.dart';
 import 'package:rxdart/rxdart.dart';
-import 'frames/menu.dart';
+import 'screens/menu.dart';
 
 class SearchResultsList {
   List<Film> _list;

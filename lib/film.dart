@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'translator.dart';
 
@@ -8,6 +7,7 @@ class Film {
   int _year;
   String _country;
   List<String> _genres;
+  String _age;
   String _url;
   String _poster;
   String _type;
@@ -29,6 +29,7 @@ class Film {
       this._year,
       this._country,
       this._genres,
+      this._age,
       this._url,
       this._poster,
       this._type,
@@ -44,7 +45,7 @@ class Film {
             BehaviorSubject<List<Translator>>.seeded(_translatorsList);
 
   Film.newFilm()
-      : this('', '', 0, '', [], '', '', '', '', '', '', '', false, []);
+      : this('', '', 0, '', [], '', '', '', '', '', '', '', '', false, []);
 
   String get name => _name;
 
@@ -55,6 +56,8 @@ class Film {
   String get country => _country;
 
   List<String> get genres => _genres;
+
+  String get age => _age;
 
   String get url => _url;
 
@@ -101,6 +104,7 @@ class Film {
   }
 
   void setGenre(List genres) {
+    _genres.clear();
     for (var item in genres) {
       _genres.add(item.toString());
     }
@@ -141,5 +145,9 @@ class Film {
   void addTranslator(Translator translator) {
     _translatorsList.add(translator);
     onTranslators.add(_translatorsList);
+  }
+
+  void setAge(String age) {
+    _age = age;
   }
 }

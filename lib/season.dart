@@ -1,5 +1,3 @@
-import 'package:rxdart/rxdart.dart';
-
 import 'episode.dart';
 
 class Season {

@@ -9,7 +9,7 @@ class NetworkService {
   void _updateCookie(http.Response response) {
     String allSetCookie = response.headers['set-cookie']!;
 
-    if (allSetCookie != null) {
+    if (allSetCookie.isNotEmpty) {
       var setCookies = allSetCookie.split(',');
 
       for (var setCookie in setCookies) {

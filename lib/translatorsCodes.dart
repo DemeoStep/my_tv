@@ -5,6 +5,7 @@ Map<String, String> codes = {
   'байбако (BaibaKoTV)': '7',
   'Амедиа (Amedia)': '12',
   'AniDUB': '18',
+  'Anilibria': '19',
   'Discovery': '22',
   'GREEN TEA': '29',
   'колдфильм (Coldfilm)': '35',
