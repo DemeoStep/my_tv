@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:my_tv/episode.dart';
 import 'package:my_tv/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -182,6 +183,10 @@ class FilmDetails extends StatelessWidget {
       } else
         await filmParse();
     }
+
+    for(var translator in film.translatorsList) {
+      print(translator.seasonsList.length);
+    }
   }
 
   Future<bool> isSerial() async {
@@ -197,17 +202,17 @@ class FilmDetails extends StatelessWidget {
     film.translatorsList.clear();
     for (var trans in film.translators) {
       var translator = Translator();
-      getSeasonsCount(
-              trans.keys.toString().replaceAll('(', '').replaceAll(')', ''),
-              translator)
+      translator.setName(
+          trans.values.toString().replaceAll('(', '').replaceAll(')', ''));
+      translator.setId(
+          trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
+
+      getSeasonsCount(translator)
           .then((value) {
-        translator.setName(
-            trans.values.toString().replaceAll('(', '').replaceAll(')', ''));
-        translator.setId(
-            trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
         film.addTranslator(translator);
       });
     }
+
   }
 
   Future<void> filmParse() async {
@@ -256,21 +261,61 @@ class FilmDetails extends StatelessWidget {
     launch(urls.last.trim());
   }
 
-  Future<void> getSeasonsCount(
-      String translatorId, Translator translator) async {
-    var response =
-        await http.get(Uri.parse('${film.url}#t:$translatorId-s:1-e:1'));
-    var document = html_parser.parse(response.body);
+  Future<void> getSeasonsCount(Translator translator) async {
+    var date = DateTime.now().millisecondsSinceEpoch;
+    var url = Uri.parse('http://hdrezka.co/ajax/get_cdn_series/?t=$date');
 
-    var seasons = document.querySelectorAll('[id^="simple-episodes-list-"]');
+    var cookie = http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
+    var body = 'id=${film.id}&translator_id=${translator.id}&action=get_episodes';
 
-    for (var i = 1; i <= seasons.length; i++) {
+    http.headers = {
+      'Host': 'hdrezka.co',
+      'User-Agent':
+      'Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0',
+      'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+      'Accept-Encoding': 'gzip, deflate',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Origin': 'http://hdrezka.co',
+      'Connection': 'keep-alive',
+      'Referer': film.url,
+      'Cookie': cookie,
+    };
+
+    var response = await http.post(url, body: body);
+
+    var str = jsonDecode(response.body);
+
+    var seasons = str['seasons'].toString().split('</li>');
+
+    for(var item in seasons) {
+      if(item == '') continue;
+
       var season = Season();
 
-      var episodes = document.querySelectorAll('[data-season_id^="$i"]');
-      season.setCount(episodes.length);
+      season.setId(item.substring(item.indexOf('data-tab_id="'), item.indexOf('">Сезон')).replaceAll('data-tab_id="', ''));
+      var rawstr = str['episodes'].toString().split('</ul>');
+
+      for(var item in rawstr) {
+        var episodes = item.split('</li>');
+
+        for(var episode in episodes) {
+          if(episode == '') continue;
+
+          var seasonId = episode.substring(episode.indexOf('data-season_id="'), episode.indexOf('" data-episode_id=')).replaceAll('data-season_id="', '');
+
+          if(seasonId == season.id) {
+            episode = episode.substring(episode.indexOf('data-episode_id="'), episode.indexOf('">Серия')).replaceAll('data-episode_id="', '');
+            season.addEpisode(Episode(episode: episode));
+          }
+        }
+
+      }
+
       translator.addSeason(season);
     }
+
   }
 
   Future<void> getTranslators() async {

@@ -1,6 +1,7 @@
 import 'episode.dart';
 
 class Season {
+  String _id = '';
   int _episodesCount = 0;
   List<Episode> _episodes = [];
 
@@ -14,5 +15,12 @@ class Season {
 
   void addEpisode(Episode episode) {
     _episodes.add(episode);
+    _episodesCount++;
+  }
+
+  String get id => _id;
+
+  void setId(String id) {
+    _id = id;
   }
 }

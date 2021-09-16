@@ -1,10 +1,12 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:better_player/better_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tv/my_http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:my_tv/player.dart';
 import '../film.dart';
 import '../translator.dart';
 
@@ -12,6 +14,9 @@ class SeasonsScreen extends StatelessWidget {
   Translator translator;
   NetworkService http;
   Film film;
+  File? playlist;
+
+  List<BetterPlayerDataSource> dataSourceList = [];
 
   var seasonSelected;
   BehaviorSubject<int> onSeason;
@@ -28,14 +33,14 @@ class SeasonsScreen extends StatelessWidget {
     seasonSelected = index;
   }
 
-  Future<void> getEpisode(int season, int episode, String translatorId) async {
+  Future<void> getEpisode(int season, int episode, Translator translator) async {
     var date = DateTime.now().millisecondsSinceEpoch;
     var jsUrl = Uri.parse('http://hdrezka.co/ajax/get_cdn_series/?t=$date');
 
     var cookie =
         http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
     var body =
-        'id=${film.id}&translator_id=$translatorId&season=${season.toString()}&episode=${episode.toString()}&action=get_stream';
+        'id=${film.id}&translator_id=${translator.id}&season=${translator.seasonsList[season].id}&episode=${translator.seasonsList[season].episodes[episode].episode}&action=get_stream';
 
     http.headers = {
       'Host': 'hdrezka.co',
@@ -58,16 +63,66 @@ class SeasonsScreen extends StatelessWidget {
 
     var urls = str.last.split('or');
 
-    launch(urls.last.trim());
+    dataSourceList.add(
+      BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        urls.last.trim(),
+      ),
+    );
+
+    print(urls.last.trim());
+
+    if(episode + 1 < translator.seasonsList[season].episodes.length) {
+      episode++;
+      await getEpisode(season, episode, translator);
+    }
+
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getExternalStorageDirectory();
+    return directory!.path;
+  }
+
+  Future<void> get _localFile async {
+    final path = await _localPath;
+    playlist = File('$path/season.m3u');
+  }
+
+  Future<void> writeEpisode(String playlistString) async {
+    playlist!.writeAsString('$playlistString\n', mode: FileMode.append);
+  }
+  
+  Future<void> createPlaylist() async {
+    _localFile.then((value) {
+      playlist!.writeAsString('#EXTM3U\n');
+      //     '#EXT-X-TARGETDURATION:6\n' +
+      // '#EXT-X-ALLOW-CACHE:YES\n' +
+      // '#EXT-X-PLAYLIST-TYPE:VOD\n' +
+      // '#EXT-X-VERSION:3\n' +
+      // '#EXT-X-MEDIA-SEQUENCE:1\n');
+    });
+  }
+
+  Future<void> readEpisodes() async {
+    try {
+      // Read the file
+      final contents = await playlist!.readAsString();
+
+      print(contents);
+    } catch (e) {
+      // If encountering an error, return 0
+      print(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> tabs = [];
 
-    for (var i = 1; i <= translator.seasonsCount; i++) {
+    for (var season in translator.seasonsList) {
       tabs.add(Tab(
-        text: 'Сезон $i',
+        child: FittedBox(child: Text('${season.id} сезон', maxLines: 1, textAlign: TextAlign.center,)),
       ));
     }
 
@@ -104,8 +159,10 @@ class SeasonsScreen extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         side: BorderSide.none,
                       ),
-                      onPressed: () {
-                        getEpisode(season + 1, index + 1, translator.id);
+                      onPressed: () async {
+                        await createPlaylist();
+                        await getEpisode(season, index, translator);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Player(dataSourceList: dataSourceList)));
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 15),
@@ -115,7 +172,7 @@ class SeasonsScreen extends StatelessWidget {
                         alignment: Alignment.center,
                         height: 50,
                         child: Text(
-                          '${index + 1} серия',
+                          '${translator.seasonsList[season].episodes[index].episode} серия',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                           textAlign: TextAlign.center,
                         ),
