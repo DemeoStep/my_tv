@@ -37,14 +37,10 @@ class Result extends StatelessWidget {
         },
         child: Container(
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Stack(children: [
                   Container(
-                    height: 220,
-                    /* decoration: BoxDecoration(boxShadow: [
-                      BoxShadow(blurRadius: 3),
-                    ]), */
                     child: Image.network(
                       list[index].poster,
                       fit: BoxFit.fitHeight,

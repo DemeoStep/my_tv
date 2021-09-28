@@ -13,7 +13,7 @@ import 'package:download_assets/download_assets.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-  final ver = 8;
+  final ver = 10;
 
   Future<bool> checkUpdates() async {
     var response =
@@ -67,6 +67,8 @@ class MainScreen extends StatelessWidget {
       }
     });
 
+    final aspectRatio = (((MediaQuery.of(context).size.height) / MediaQuery.of(context).size.width) * 100).ceil() / 100;
+
     rezka.showNew(searchResult);
     Menu.index = 0;
 
@@ -99,8 +101,8 @@ class MainScreen extends StatelessWidget {
                     var list = snapshot.data ?? [];
                     return GridView.builder(
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: 0.57,
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: aspectRatio,
                           crossAxisCount: 5,
                         ),
                         itemCount: list.length,

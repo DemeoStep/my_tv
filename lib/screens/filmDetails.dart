@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:better_player/better_player.dart';
+import 'package:my_tv/chewie_player.dart';
 import 'package:my_tv/episode.dart';
 import 'package:my_tv/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:my_tv/film.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:my_tv/translatorsCodes.dart';
+import '../player.dart';
 import 'seasonsScreen.dart';
 
 import '../season.dart';
@@ -85,10 +88,20 @@ class FilmDetails extends StatelessWidget {
                                   Divider(
                                     color: Colors.grey.shade600,
                                   ),
-                                  film.rate.isNotEmpty ? fields('Рейтинг ', film.rate) : Container(),
-                                  fields('Жанр: ', film.genres.toString().replaceAll('[', '').replaceAll(']', '')),
+                                  film.rate.isNotEmpty
+                                      ? fields('Рейтинг ', film.rate)
+                                      : Container(),
+                                  fields(
+                                      'Жанр: ',
+                                      film.genres
+                                          .toString()
+                                          .replaceAll('[', '')
+                                          .replaceAll(']', '')),
                                   fields('Страна: ', film.country),
-                                  film.age.isNotEmpty ? fields('Возрастные ограничения: ', film.age) : Container(),
+                                  film.age.isNotEmpty
+                                      ? fields(
+                                          'Возрастные ограничения: ', film.age)
+                                      : Container(),
                                   Divider(
                                     color: Colors.grey.shade600,
                                   ),
@@ -131,7 +144,7 @@ class FilmDetails extends StatelessWidget {
                                           translator: list[index],
                                           seasonSelected: 0,
                                         )))
-                            : playFilm(list[index].id);
+                            : playFilm(context, list[index].id);
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 15),
@@ -158,17 +171,17 @@ class FilmDetails extends StatelessWidget {
     );
   }
 
-  Widget fields (String fieldName, String value) {
-    return RichText(text: TextSpan(
-        text: '$fieldName ',
-        style: TextStyle(color: Colors.yellow),
-        children: <TextSpan> [
+  Widget fields(String fieldName, String value) {
+    return RichText(
+        text: TextSpan(
+            text: '$fieldName ',
+            style: TextStyle(color: Colors.yellow),
+            children: <TextSpan>[
           TextSpan(
             text: value,
             style: TextStyle(color: Colors.white),
           )
-        ]
-    ));
+        ]));
   }
 
   Future<void> check() async {
@@ -184,7 +197,7 @@ class FilmDetails extends StatelessWidget {
         await filmParse();
     }
 
-    for(var translator in film.translatorsList) {
+    for (var translator in film.translatorsList) {
       print(translator.seasonsList.length);
     }
   }
@@ -204,15 +217,13 @@ class FilmDetails extends StatelessWidget {
       var translator = Translator();
       translator.setName(
           trans.values.toString().replaceAll('(', '').replaceAll(')', ''));
-      translator.setId(
-          trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
+      translator
+          .setId(trans.keys.toString().replaceAll('(', '').replaceAll(')', ''));
 
-      getSeasonsCount(translator)
-          .then((value) {
+      getSeasonsCount(translator).then((value) {
         film.addTranslator(translator);
       });
     }
-
   }
 
   Future<void> filmParse() async {
@@ -228,7 +239,7 @@ class FilmDetails extends StatelessWidget {
     }
   }
 
-  Future<void> playFilm(String translatorId) async {
+  Future<void> playFilm(BuildContext context, String translatorId) async {
     var date = DateTime.now().millisecondsSinceEpoch;
     var jsUrl = Uri.parse('http://hdrezka.co/ajax/get_cdn_series/?t=$date');
 
@@ -258,20 +269,47 @@ class FilmDetails extends StatelessWidget {
 
     var urls = str.last.split('or');
 
-    launch(urls.last.trim());
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChewiePlayer(true,
+          playlist: [urls.last.trim()],
+          index: 0
+        ),
+      ),
+    );
+
+
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => Player(
+    //       [
+    //         BetterPlayerDataSource(
+    //           BetterPlayerDataSourceType.network,
+    //           urls.last.trim(),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
+
+    //launch(urls.last.trim());
   }
 
   Future<void> getSeasonsCount(Translator translator) async {
     var date = DateTime.now().millisecondsSinceEpoch;
     var url = Uri.parse('http://hdrezka.co/ajax/get_cdn_series/?t=$date');
 
-    var cookie = http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
-    var body = 'id=${film.id}&translator_id=${translator.id}&action=get_episodes';
+    var cookie =
+        http.headers.values.toString().replaceAll('(', '').replaceAll(')', '');
+    var body =
+        'id=${film.id}&translator_id=${translator.id}&action=get_episodes';
 
     http.headers = {
       'Host': 'hdrezka.co',
       'User-Agent':
-      'Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0',
+          'Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0',
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
       'Accept-Encoding': 'gzip, deflate',
@@ -289,33 +327,39 @@ class FilmDetails extends StatelessWidget {
 
     var seasons = str['seasons'].toString().split('</li>');
 
-    for(var item in seasons) {
-      if(item == '') continue;
+    for (var item in seasons) {
+      if (item == '') continue;
 
       var season = Season();
 
-      season.setId(item.substring(item.indexOf('data-tab_id="'), item.indexOf('">Сезон')).replaceAll('data-tab_id="', ''));
+      season.setId(item
+          .substring(item.indexOf('data-tab_id="'), item.indexOf('">Сезон'))
+          .replaceAll('data-tab_id="', ''));
       var rawstr = str['episodes'].toString().split('</ul>');
 
-      for(var item in rawstr) {
+      for (var item in rawstr) {
         var episodes = item.split('</li>');
 
-        for(var episode in episodes) {
-          if(episode == '') continue;
+        for (var episode in episodes) {
+          if (episode == '') continue;
 
-          var seasonId = episode.substring(episode.indexOf('data-season_id="'), episode.indexOf('" data-episode_id=')).replaceAll('data-season_id="', '');
+          var seasonId = episode
+              .substring(episode.indexOf('data-season_id="'),
+                  episode.indexOf('" data-episode_id='))
+              .replaceAll('data-season_id="', '');
 
-          if(seasonId == season.id) {
-            episode = episode.substring(episode.indexOf('data-episode_id="'), episode.indexOf('">Серия')).replaceAll('data-episode_id="', '');
+          if (seasonId == season.id) {
+            episode = episode
+                .substring(episode.indexOf('data-episode_id="'),
+                    episode.indexOf('">Серия'))
+                .replaceAll('data-episode_id="', '');
             season.addEpisode(Episode(episode: episode));
           }
         }
-
       }
 
       translator.addSeason(season);
     }
-
   }
 
   Future<void> getTranslators() async {
@@ -399,18 +443,29 @@ class FilmDetails extends StatelessWidget {
     }
 
     var ages = document.getElementsByTagName('tr');
-    for(var str in ages) {
+    for (var str in ages) {
       var out = str.innerHtml;
-      if(out.contains('<td class="l"><h2>Возраст</h2>')) {
-        var age = out.replaceAll('<td class="l"><h2>Возраст</h2>:</td> <td><span class="bold" style="color: #666;">', '').replaceAll('</span>', '').replaceAll('</td>', '');
+      if (out.contains('<td class="l"><h2>Возраст</h2>')) {
+        var age = out
+            .replaceAll(
+                '<td class="l"><h2>Возраст</h2>:</td> <td><span class="bold" style="color: #666;">',
+                '')
+            .replaceAll('</span>', '')
+            .replaceAll('</td>', '');
         film.setAge(age);
       }
 
-      if(out.contains('<td class="l"><h2>Жанр</h2>')) {
-        var genres = out.replaceAll('<td class="l"><h2>Жанр</h2>:</td> <td>', '').replaceAll('</td>', '').split(',');
+      if (out.contains('<td class="l"><h2>Жанр</h2>')) {
+        var genres = out
+            .replaceAll('<td class="l"><h2>Жанр</h2>:</td> <td>', '')
+            .replaceAll('</td>', '')
+            .split(',');
         List<String> genresList = [];
-        for(var genre in genres) {
-          genre = genre.substring(genre.indexOf('itemprop="genre">')).replaceAll('itemprop="genre">', '').replaceAll('</span></a>', '');
+        for (var genre in genres) {
+          genre = genre
+              .substring(genre.indexOf('itemprop="genre">'))
+              .replaceAll('itemprop="genre">', '')
+              .replaceAll('</span></a>', '');
           genresList.add(genre);
         }
         film.setGenre(genresList);

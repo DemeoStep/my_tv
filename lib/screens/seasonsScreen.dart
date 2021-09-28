@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_tv/chewie_player.dart';
 import 'package:my_tv/my_http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -14,8 +15,8 @@ class SeasonsScreen extends StatelessWidget {
   Translator translator;
   NetworkService http;
   Film film;
-  File? playlist;
 
+  List<String> playlist = [];
   List<BetterPlayerDataSource> dataSourceList = [];
 
   var seasonSelected;
@@ -33,7 +34,7 @@ class SeasonsScreen extends StatelessWidget {
     seasonSelected = index;
   }
 
-  Future<void> getEpisode(int season, int episode, Translator translator) async {
+  Future<void> getEpisodes(int season, int episode, Translator translator) async {
     var date = DateTime.now().millisecondsSinceEpoch;
     var jsUrl = Uri.parse('http://hdrezka.co/ajax/get_cdn_series/?t=$date');
 
@@ -63,57 +64,20 @@ class SeasonsScreen extends StatelessWidget {
 
     var urls = str.last.split('or');
 
-    dataSourceList.add(
-      BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
-        urls.last.trim(),
-      ),
-    );
+    playlist.add(urls.last.trim());
 
-    print(urls.last.trim());
+    // dataSourceList.add(
+    //   BetterPlayerDataSource(
+    //     BetterPlayerDataSourceType.network,
+    //     urls.last.trim(),
+    //   ),
+    // );
 
     if(episode + 1 < translator.seasonsList[season].episodes.length) {
       episode++;
-      await getEpisode(season, episode, translator);
+      await getEpisodes(season, episode, translator);
     }
 
-  }
-
-  Future<String> get _localPath async {
-    final directory = await getExternalStorageDirectory();
-    return directory!.path;
-  }
-
-  Future<void> get _localFile async {
-    final path = await _localPath;
-    playlist = File('$path/season.m3u');
-  }
-
-  Future<void> writeEpisode(String playlistString) async {
-    playlist!.writeAsString('$playlistString\n', mode: FileMode.append);
-  }
-  
-  Future<void> createPlaylist() async {
-    _localFile.then((value) {
-      playlist!.writeAsString('#EXTM3U\n');
-      //     '#EXT-X-TARGETDURATION:6\n' +
-      // '#EXT-X-ALLOW-CACHE:YES\n' +
-      // '#EXT-X-PLAYLIST-TYPE:VOD\n' +
-      // '#EXT-X-VERSION:3\n' +
-      // '#EXT-X-MEDIA-SEQUENCE:1\n');
-    });
-  }
-
-  Future<void> readEpisodes() async {
-    try {
-      // Read the file
-      final contents = await playlist!.readAsString();
-
-      print(contents);
-    } catch (e) {
-      // If encountering an error, return 0
-      print(e);
-    }
   }
 
   @override
@@ -160,9 +124,9 @@ class SeasonsScreen extends StatelessWidget {
                         side: BorderSide.none,
                       ),
                       onPressed: () async {
-                        await createPlaylist();
-                        await getEpisode(season, index, translator);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Player(dataSourceList: dataSourceList)));
+                        await getEpisodes(season, 0, translator);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index,)));
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Player(dataSourceList)));
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 15),
