@@ -3,6 +3,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:video_player/video_player.dart';
+import 'widgets/videoControls.dart';
 
 class ShowControls extends Intent {}
 class PlayPause extends Intent {}
@@ -16,8 +17,9 @@ class ChewiePlayer extends StatefulWidget {
   BehaviorSubject<bool> onPlay;
   bool isPlaying = true;
   int index;
+  String filmName;
 
-  ChewiePlayer(this.isPlaying, {required this.playlist, required this.index}) : onPlay = BehaviorSubject<bool>.seeded(isPlaying);
+  ChewiePlayer(this.isPlaying, {required this.playlist, required this.index, required this.filmName}) : onPlay = BehaviorSubject<bool>.seeded(isPlaying);
 
   @override
   _ChewiePlayerState createState() => _ChewiePlayerState();
@@ -27,6 +29,7 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
   bool playing = true;
+  var controls = VideoControls(false, "");
 
   late final VoidCallback onPlayPause = () {
     playPause();
@@ -78,7 +81,8 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   }
 
   void showControls() {
-    print('SHOW COLTROLS!!!!!');
+    controls.showHideControls();
+    onPlayPause.call();
   }
 
   void playPause() async {
@@ -148,13 +152,16 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
     );
     await videoPlayerController!.initialize();
     chewieController = ChewieController(
-      showControlsOnInitialize: true,
-      showControls: true,
+      overlay: controls,
+      fullScreenByDefault: true,
+      showControlsOnInitialize: false,
+      showControls: false,
       autoInitialize: true,
       aspectRatio: videoPlayerController!.value.size.aspectRatio,
       videoPlayerController: videoPlayerController!,
       autoPlay: true,
       looping: false,
+      allowedScreenSleep: false,
     );
 
     chewieController!.play().then((value) {
@@ -164,6 +171,8 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
 
   @override
   Widget build(BuildContext context) {
+    controls.filmName = widget.filmName;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: StreamBuilder<bool>(

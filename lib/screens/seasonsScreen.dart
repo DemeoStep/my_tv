@@ -1,13 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tv/chewie_player.dart';
 import 'package:my_tv/my_http.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:my_tv/player.dart';
 import '../film.dart';
 import '../translator.dart';
 
@@ -66,13 +63,6 @@ class SeasonsScreen extends StatelessWidget {
 
     playlist.add(urls.last.trim());
 
-    // dataSourceList.add(
-    //   BetterPlayerDataSource(
-    //     BetterPlayerDataSourceType.network,
-    //     urls.last.trim(),
-    //   ),
-    // );
-
     if(episode + 1 < translator.seasonsList[season].episodes.length) {
       episode++;
       await getEpisodes(season, episode, translator);
@@ -125,7 +115,7 @@ class SeasonsScreen extends StatelessWidget {
                       ),
                       onPressed: () async {
                         await getEpisodes(season, 0, translator);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index,)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, filmName: film.name,)));
                         //Navigator.push(context, MaterialPageRoute(builder: (context) => Player(dataSourceList)));
                       },
                       child: Container(

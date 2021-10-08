@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:better_player/better_player.dart';
 import 'package:my_tv/chewie_player.dart';
 import 'package:my_tv/episode.dart';
+import 'package:my_tv/history.dart';
 import 'package:my_tv/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -269,32 +270,18 @@ class FilmDetails extends StatelessWidget {
 
     var urls = str.last.split('or');
 
+    History.addFilm(id: film.id);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChewiePlayer(true,
           playlist: [urls.last.trim()],
-          index: 0
+          index: 0,
+          filmName: film.name,
         ),
       ),
     );
-
-
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => Player(
-    //       [
-    //         BetterPlayerDataSource(
-    //           BetterPlayerDataSourceType.network,
-    //           urls.last.trim(),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
-
-    //launch(urls.last.trim());
   }
 
   Future<void> getSeasonsCount(Translator translator) async {
