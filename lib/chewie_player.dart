@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
@@ -29,10 +31,14 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
   bool playing = true;
-  var controls = VideoControls(false, "");
+  var controls = VideoControls(false, "", 0.0);
+
+  late Timer _timer;
 
   late final VoidCallback onPlayPause = () {
     playPause();
+    controls.isPlaying = playing;
+    controls.showHideControls();
   };
 
   late final VoidCallback onSeekForward = () {
@@ -77,12 +83,28 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
     widget.playlist.clear();
     videoPlayerController!.dispose();
     chewieController!.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
   void showControls() {
-    controls.showHideControls();
-    onPlayPause.call();
+    if(playing) {
+      controls.isPlaying = playing;
+      controls.showHideControls();
+    } else {
+      onPlayPause.call();
+    }
+  }
+
+  void progress() {
+    _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      var percent = videoPlayerController!.value.position.inSeconds / videoPlayerController!.value.duration.inSeconds;
+      controls.onProgress(percent);
+      var progress = videoPlayerController!.value.position.toString();
+      var remaining = (videoPlayerController!.value.duration - videoPlayerController!.value.position).toString();
+      controls.strProgress = progress.substring(0, progress.indexOf('.'));
+      controls.strRemaining = remaining.substring(0, remaining.indexOf('.'));
+    });
   }
 
   void playPause() async {
@@ -95,10 +117,12 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
 
   void forward() async {
     chewieController!.seekTo(Duration(seconds: videoPlayerController!.value.position.inSeconds + 10));
+    controls.seeking();
   }
 
   void backward() async {
     chewieController!.seekTo(Duration(seconds: videoPlayerController!.value.position.inSeconds - 10));
+    controls.seeking();
   }
   
   void next() {
@@ -127,7 +151,6 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
           videoPlayerController!.value.position ==
               videoPlayerController!.value.duration) {
         isEnded = true;
-        print('is ended');
 
         if (widget.index < widget.playlist.length - 1) {
           widget.index++;
@@ -143,6 +166,7 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   }
 
   void initControllers(int index, BuildContext context) async {
+    controls = VideoControls(false, "", 0.0);
     isEnded = false;
     videoPlayerController = VideoPlayerController.network(widget.playlist[index]);
     videoPlayerController!.addListener(
@@ -167,6 +191,8 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
     chewieController!.play().then((value) {
       widget.onPlay.add(true);
     });
+
+    progress();
   }
 
   @override

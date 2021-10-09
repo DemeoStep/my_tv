@@ -1,17 +1,12 @@
 import 'dart:convert';
-
-import 'package:better_player/better_player.dart';
 import 'package:my_tv/chewie_player.dart';
 import 'package:my_tv/episode.dart';
 import 'package:my_tv/history.dart';
 import 'package:my_tv/translator.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'package:flutter/material.dart';
 import 'package:my_tv/film.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:my_tv/translatorsCodes.dart';
-import '../player.dart';
 import 'seasonsScreen.dart';
 
 import '../season.dart';
