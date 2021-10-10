@@ -115,7 +115,7 @@ class SeasonsScreen extends StatelessWidget {
                       ),
                       onPressed: () async {
                         await getEpisodes(season, 0, translator);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, filmName: film.name,)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, filmName: film.name, season: (season + 1).toString(),)));
                         //Navigator.push(context, MaterialPageRoute(builder: (context) => Player(dataSourceList)));
                       },
                       child: Container(

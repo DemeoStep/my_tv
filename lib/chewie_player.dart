@@ -20,8 +20,9 @@ class ChewiePlayer extends StatefulWidget {
   bool isPlaying = true;
   int index;
   String filmName;
+  String season;
 
-  ChewiePlayer(this.isPlaying, {required this.playlist, required this.index, required this.filmName}) : onPlay = BehaviorSubject<bool>.seeded(isPlaying);
+  ChewiePlayer(this.isPlaying, {required this.playlist, required this.index, required this.filmName, required this.season}) : onPlay = BehaviorSubject<bool>.seeded(isPlaying);
 
   @override
   _ChewiePlayerState createState() => _ChewiePlayerState();
@@ -31,7 +32,8 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
   bool playing = true;
-  var controls = VideoControls(false, "", 0.0);
+
+  var controls = VideoControls(false, "", "", 0.0);
 
   late Timer _timer;
 
@@ -166,7 +168,7 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   }
 
   void initControllers(int index, BuildContext context) async {
-    controls = VideoControls(false, "", 0.0);
+    controls = VideoControls(false, widget.filmName, widget.season == "" ? "" : "(${widget.season} сезон ${widget.index + 1} серия)", 0.0);
     isEnded = false;
     videoPlayerController = VideoPlayerController.network(widget.playlist[index]);
     videoPlayerController!.addListener(

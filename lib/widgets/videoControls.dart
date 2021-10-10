@@ -7,6 +7,7 @@ import 'package:pausable_timer/pausable_timer.dart';
 class VideoControls extends StatelessWidget {
   bool isShowing;
   String filmName;
+  String season;
   double progress;
   String strProgress = "";
   String strRemaining = "";
@@ -16,7 +17,7 @@ class VideoControls extends StatelessWidget {
   BehaviorSubject<bool> show;
   BehaviorSubject<double> percent;
 
-  VideoControls(this.isShowing, this.filmName, this.progress)
+  VideoControls(this.isShowing, this.filmName, this.season, this.progress)
       : show = BehaviorSubject<bool>.seeded(isShowing),
         percent = BehaviorSubject<double>.seeded(progress);
 
@@ -83,7 +84,7 @@ class VideoControls extends StatelessWidget {
                   top: 10,
                   start: 10,
                   child: Text(
-                    filmName,
+                    "$filmName $season",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

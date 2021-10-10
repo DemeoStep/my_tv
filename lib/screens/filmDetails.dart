@@ -274,6 +274,7 @@ class FilmDetails extends StatelessWidget {
           playlist: [urls.last.trim()],
           index: 0,
           filmName: film.name,
+          season: "",
         ),
       ),
     );
