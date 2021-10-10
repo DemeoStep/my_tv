@@ -64,10 +64,10 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   final playPauseKey = LogicalKeySet(LogicalKeyboardKey.mediaPlayPause);
   final seekForwardKey = LogicalKeySet(LogicalKeyboardKey.arrowRight);
   final seekBackwardKey = LogicalKeySet(LogicalKeyboardKey.arrowLeft);
-  final controlsShowKey = LogicalKeySet(LogicalKeyboardKey.select);
   final playNextKey = LogicalKeySet(LogicalKeyboardKey.mediaFastForward);
   final playPrevKey = LogicalKeySet(LogicalKeyboardKey.mediaRewind);
   final showControlsKey = LogicalKeySet(LogicalKeyboardKey.select);
+  final enterKey = LogicalKeySet(LogicalKeyboardKey.enter);
 
   bool isEnded = false;
 
@@ -207,8 +207,9 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
           return FocusableActionDetector(
             autofocus: true,
             shortcuts: {
-              showControlsKey: ShowControls(),
+              showControlsKey: PlayPause(),
               playPauseKey: PlayPause(),
+              enterKey: PlayPause(),
               seekForwardKey: SeekForward(),
               seekBackwardKey: SeekBackward(),
               playNextKey: NextVideo(),
@@ -228,9 +229,17 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
               PreviousVideo:
               CallbackAction(onInvoke: (e) => onPrevVideo.call()),
             },
-            child: chewieController != null ? Chewie(
-              key: UniqueKey(),
-                controller: chewieController!) :
+            child: chewieController != null ? OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.zero,
+              ),
+              onPressed: () {
+                onPlayPause.call();
+                },
+              child: Chewie(
+                key: UniqueKey(),
+                  controller: chewieController!),
+            ) :
             Container(),
           );
         }
