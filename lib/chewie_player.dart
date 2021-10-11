@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:video_player/video_player.dart';
 import 'widgets/videoControls.dart';
+import 'package:wakelock/wakelock.dart';
 
 class ShowControls extends Intent {}
 class PlayPause extends Intent {}
@@ -86,6 +87,7 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
     videoPlayerController!.dispose();
     chewieController!.dispose();
     _timer.cancel();
+    Wakelock.disable();
     super.dispose();
   }
 
@@ -187,7 +189,6 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
       videoPlayerController: videoPlayerController!,
       autoPlay: true,
       looping: false,
-      allowedScreenSleep: false,
     );
 
     chewieController!.play().then((value) {
@@ -200,6 +201,7 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
   @override
   Widget build(BuildContext context) {
     controls.filmName = widget.filmName;
+    Wakelock.enable();
 
     return Scaffold(
       backgroundColor: Colors.black,
