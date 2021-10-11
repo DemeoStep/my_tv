@@ -13,7 +13,7 @@ import 'package:download_assets/download_assets.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-  final ver = 14;
+  final ver = 15;
 
   Future<bool> checkUpdates() async {
     var response =
