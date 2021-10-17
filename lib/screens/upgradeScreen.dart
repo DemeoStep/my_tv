@@ -22,7 +22,7 @@ class UpgradeScreen extends StatelessWidget {
   Future _downloadAssets(BuildContext context) async {
     try {
       await DownloadAssetsController.startDownload(
-          assetsUrl: 'http://euronet.dn.ua/mytv/app-release.zip',
+          assetsUrl: 'http://demeo.euronet.dn.ua/mytv/app-release.zip',
           onProgress: (progressValue) {
             downloaded = false;
             changePercents(progressValue);

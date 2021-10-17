@@ -22,6 +22,7 @@ Map<String, String> codes = {
   'Не нужен': '110',
   'HDrezka Studio': '111',
   'SoftBox': '114',
+  'Светла': '117',
   'TVShows': '232',
   'AniMaunt': '235',
   'Оригинал (+субтитры)': '238',

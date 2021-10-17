@@ -150,4 +150,27 @@ class Film {
   void setAge(String age) {
     _age = age;
   }
+
+  factory Film.fromJson(Map<String, dynamic> json) {
+    var film = Film.newFilm();
+    film._name = json['name'] as String;
+    film._id = json['id'] as String;
+    film._year = json['year'] as int;
+    film._url = json['url'] as String;
+    film._poster = json['poster'] as String;
+    film._type = json['type'] as String;
+    return film;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name' : _name,
+      'id' : _id,
+      'year' : _year,
+      'url' : _url,
+      'poster' : _poster,
+      'type' : _type,
+    };
+  }
+
 }

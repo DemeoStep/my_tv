@@ -3,6 +3,7 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tv/chewie_player.dart';
+import 'package:my_tv/history.dart';
 import 'package:my_tv/my_http.dart';
 import 'package:rxdart/rxdart.dart';
 import '../film.dart';
@@ -115,8 +116,8 @@ class SeasonsScreen extends StatelessWidget {
                       ),
                       onPressed: () async {
                         await getEpisodes(season, 0, translator);
+                        History.addFilm(film: film);
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, filmName: film.name, season: (season + 1).toString(),)));
-                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Player(dataSourceList)));
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 15),

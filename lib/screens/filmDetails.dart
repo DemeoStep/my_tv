@@ -265,7 +265,7 @@ class FilmDetails extends StatelessWidget {
 
     var urls = str.last.split('or');
 
-    History.addFilm(id: film.id);
+    History.addFilm(film: film);
 
     Navigator.push(
       context,

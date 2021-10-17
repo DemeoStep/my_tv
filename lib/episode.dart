@@ -6,4 +6,16 @@ class Episode {
   }
 
   String get episode => _episode;
+
+  factory Episode.fromJson(Map<String, dynamic> json) {
+    return Episode(
+      episode: json['episode'] as String
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'episode' : _episode
+    };
+  }
 }

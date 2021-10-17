@@ -1,4 +1,5 @@
 import 'package:html/parser.dart' as html_parser;
+import 'package:my_tv/history.dart';
 import 'package:my_tv/searchResultsList.dart';
 import 'package:my_tv/film.dart';
 
@@ -24,6 +25,22 @@ class Rezka {
       var url = Uri.parse('http://$host/page/$v/?filter=last');
 
       await parse(url, result);
+    }
+  }
+
+  Future<void> showHistory(
+      {required SearchResultsList result, required Set<ViewedFilm> viewed}) async {
+    result.list.clear();
+    for(ViewedFilm film in viewed) {
+      var viewedFilm = Film.newFilm();
+      viewedFilm.setName(film.name);
+      viewedFilm.setUrl(film.url);
+      viewedFilm.setId(film.id);
+      viewedFilm.setYear(film.year);
+      viewedFilm.setPoster(film.poster);
+      viewedFilm.setType(film.type);
+
+      result.filmAdd(viewedFilm);
     }
   }
 

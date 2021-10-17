@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as simpleHttp;
 import 'package:flutter/material.dart';
+import 'package:my_tv/history.dart';
 import 'dart:convert';
 import 'package:my_tv/parsers/rezka.dart';
 import 'package:my_tv/screens/upgradeScreen.dart';
@@ -13,11 +14,12 @@ import 'package:download_assets/download_assets.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-  final ver = 15;
+  final ver = 16;
+  final String description = '';
 
   Future<bool> checkUpdates() async {
     var response =
-        await simpleHttp.get(Uri.parse('http://euronet.dn.ua/mytv/output-metadata.json'));
+        await simpleHttp.get(Uri.parse('http://demeo.euronet.dn.ua/mytv/output-metadata.json'));
 
     var release = jsonDecode(response.body);
 
@@ -59,6 +61,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rezka = Rezka(http: http);
+    History.fromJson();
 
     checkUpdates().then((needUpgrade) {
       if (needUpgrade) {
