@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:better_player/better_player.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tv/chewie_player.dart';
 import 'package:my_tv/history.dart';
@@ -90,7 +89,7 @@ class SeasonsScreen extends StatelessWidget {
             child: Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.grey.shade800,
-                toolbarHeight: 48,
+                toolbarHeight: 0,
                 automaticallyImplyLeading: false,
                 bottom: TabBar(
                     onTap: (index) => seasonSelect(index),

@@ -31,7 +31,7 @@ class FilmDetails extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey.shade800,
-          toolbarHeight: 48,
+          toolbarHeight: 0,
           automaticallyImplyLeading: false,
           bottom: TabBar(
               labelStyle: TextStyle(fontSize: 20),
