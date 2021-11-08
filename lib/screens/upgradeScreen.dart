@@ -26,7 +26,6 @@ class UpgradeScreen extends StatelessWidget {
           onProgress: (progressValue) {
             downloaded = false;
             changePercents(progressValue);
-            //print("Downloading - ${progressValue.toStringAsFixed(2)}");
           },
           onComplete: () {
             downloaded = true;

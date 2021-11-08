@@ -14,12 +14,12 @@ import 'package:download_assets/download_assets.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-  final ver = 16;
+  final ver = 19;
   final String description = '';
 
   Future<bool> checkUpdates() async {
-    var response =
-        await simpleHttp.get(Uri.parse('http://demeo.euronet.dn.ua/mytv/output-metadata.json'));
+    var response = await simpleHttp
+        .get(Uri.parse('http://demeo.euronet.dn.ua/mytv/output-metadata.json'));
 
     var release = jsonDecode(response.body);
 
@@ -49,7 +49,10 @@ class MainScreen extends StatelessWidget {
               child: Text("Да"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => UpgradeScreen.newUp()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UpgradeScreen.newUp()));
               },
             ),
           ],
@@ -70,9 +73,14 @@ class MainScreen extends StatelessWidget {
       }
     });
 
-    final aspectRatio = (((MediaQuery.of(context).size.height) / MediaQuery.of(context).size.width) * 100).ceil() / 100;
+    final aspectRatio = (((MediaQuery.of(context).size.height) /
+                    MediaQuery.of(context).size.width) *
+                100)
+            .ceil() /
+        100;
 
     rezka.showNew(searchResult);
+
     Menu.index = 0;
 
     return Scaffold(
@@ -102,14 +110,19 @@ class MainScreen extends StatelessWidget {
                   stream: searchResult.onFilmAdd,
                   builder: (context, snapshot) {
                     var list = snapshot.data ?? [];
+                    if(Menu.index == 0 || Menu.index == 1 || Menu.index == 3 || Menu.index == 6 || Menu.index == 9) {
+                      searchResult.sortList();
+                    }
                     return GridView.builder(
-                        gridDelegate:
-                            SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           childAspectRatio: aspectRatio,
                           crossAxisCount: 5,
                         ),
                         itemCount: list.length,
                         itemBuilder: (context, index) {
+                          // if(Menu.index == 1 || Menu.index == 3 || Menu.index == 6 || Menu.index == 9) {
+                          //   searchResult.sortList();
+                          // }
                           return Result(
                             searchResult: searchResult,
                             index: index,

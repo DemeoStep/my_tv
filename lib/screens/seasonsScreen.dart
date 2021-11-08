@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tv/chewie_player.dart';
@@ -107,28 +108,41 @@ class SeasonsScreen extends StatelessWidget {
                   ),
                   padding: EdgeInsets.all(8),
                   itemBuilder: (BuildContext context, int index) {
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey.shade800,
-                        padding: EdgeInsets.zero,
-                        side: BorderSide.none,
-                      ),
-                      onPressed: () async {
-                        await getEpisodes(season, 0, translator);
-                        History.addFilm(film: film);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, filmName: film.name, season: (season + 1).toString(),)));
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
+                    return Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.grey.shade700,
+                            Colors.grey.shade800,
+                          ],
+                          stops: [0.9, 0.9], //percents
                         ),
-                        alignment: Alignment.center,
-                        height: 50,
-                        child: Text(
-                          '${translator.seasonsList[season].episodes[index].episode} серия',
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                          textAlign: TextAlign.center,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey.withOpacity(0),
+                          padding: EdgeInsets.zero,
+                          side: BorderSide.none,
+                          elevation: 0,
+                        ),
+                        onPressed: () async {
+                          await getEpisodes(season, 0, translator);
+                          History.addFilm(film: film);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, filmName: film.name, season: (season + 1).toString(),)));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          alignment: Alignment.center,
+                          height: 50,
+                          child: Text(
+                            '${translator.seasonsList[season].episodes[index].episode} серия',
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     );

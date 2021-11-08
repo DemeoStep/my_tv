@@ -10,6 +10,7 @@ class Film {
   String _age;
   String _url;
   String _poster;
+  String _bigPoster;
   String _type;
   String _description;
   String _rate;
@@ -32,6 +33,7 @@ class Film {
       this._age,
       this._url,
       this._poster,
+      this._bigPoster,
       this._type,
       this._description,
       this._rate,
@@ -45,7 +47,7 @@ class Film {
             BehaviorSubject<List<Translator>>.seeded(_translatorsList);
 
   Film.newFilm()
-      : this('', '', 0, '', [], '', '', '', '', '', '', '', '', false, []);
+      : this('', '', 0, '', [], '', '', '', '', '', '', '', '', '', false, []);
 
   String get name => _name;
 
@@ -62,6 +64,8 @@ class Film {
   String get url => _url;
 
   String get poster => _poster;
+
+  String get bigPoster => _bigPoster;
 
   String get type => _type;
 
@@ -118,6 +122,10 @@ class Film {
     _poster = poster;
   }
 
+  void setBigPoster(String bigPoster) {
+    _bigPoster = bigPoster;
+  }
+
   void setType(String type) {
     _type = type;
   }
@@ -158,6 +166,7 @@ class Film {
     film._year = json['year'] as int;
     film._url = json['url'] as String;
     film._poster = json['poster'] as String;
+    film._bigPoster = json['bigPoster'] as String;
     film._type = json['type'] as String;
     return film;
   }
@@ -169,8 +178,16 @@ class Film {
       'year' : _year,
       'url' : _url,
       'poster' : _poster,
+      'bigPoster' : _bigPoster,
       'type' : _type,
     };
+  }
+
+  int compareTo(Film other){
+    if((this.year).compareTo(other.year) == 0) {
+      return (other.name).compareTo(this.name);
+    }
+    return (this.year).compareTo(other.year);
   }
 
 }

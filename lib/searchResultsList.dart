@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'film.dart';
 import 'package:rxdart/rxdart.dart';
 import 'screens/menu.dart';
@@ -27,4 +29,10 @@ class SearchResultsList {
     onSelect.add(index);
     Menu.onIndex.add(-1);
   }
+
+  void sortList() async {
+    _list.sort((a, b) => (b).compareTo(a));
+    onFilmAdd.add(_list);
+  }
+
 }

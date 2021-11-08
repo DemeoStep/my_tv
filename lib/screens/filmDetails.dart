@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:my_tv/chewie_player.dart';
 import 'package:my_tv/episode.dart';
 import 'package:my_tv/history.dart';
@@ -59,15 +60,22 @@ class FilmDetails extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            child: Image.network(
-                              film.poster,
-                              filterQuality: FilterQuality.high,
-                              scale: 0.7,
-                              alignment: Alignment.topLeft,
+                          Expanded(
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.87,
+                              child: FittedBox(
+                                clipBehavior: Clip.antiAlias,
+                                fit: BoxFit.fitHeight,
+                                child: Image.network(
+                                  film.bigPoster,
+                                  filterQuality: FilterQuality.high,
+                                  alignment: Alignment.topLeft,
+                                ),
+                              ),
                             ),
                           ),
                           Expanded(
+                            flex: 2,
                             child: Container(
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               child: Column(
@@ -424,6 +432,12 @@ class FilmDetails extends StatelessWidget {
     for (var item in infoList) {
       if (item.contains('Рейтинги')) getRates(item);
     }
+
+    var bigPic = document.getElementsByClassName('b-sidecover');
+
+    var bigPoster = bigPic[0].innerHtml.substring(bigPic[0].innerHtml.indexOf('<a href="'), bigPic[0].innerHtml.indexOf('" target="')).replaceAll('<a href="', '');
+
+    film.setBigPoster(bigPoster);
 
     var ages = document.getElementsByTagName('tr');
     for (var str in ages) {

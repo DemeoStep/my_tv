@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:html/parser.dart' as html_parser;
 import 'package:my_tv/history.dart';
 import 'package:my_tv/searchResultsList.dart';
@@ -139,6 +141,7 @@ class Rezka {
           film.setGenre([genre]);
         }
       }
+
       result.filmAdd(film);
     }
   }
