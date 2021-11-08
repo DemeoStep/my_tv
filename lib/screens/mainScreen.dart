@@ -14,8 +14,8 @@ import 'package:download_assets/download_assets.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-  final ver = 19;
-  final String description = '';
+  final ver = 20;
+  String description = '';
 
   Future<bool> checkUpdates() async {
     var response = await simpleHttp
@@ -26,6 +26,8 @@ class MainScreen extends StatelessWidget {
     int newVer = release['elements'][0]['versionCode'];
 
     if (newVer > ver) {
+      var descResponse = await simpleHttp.get(Uri.parse('http://demeo.euronet.dn.ua/mytv/update.txt'));
+      description = descResponse.body;
       return true;
     }
 
@@ -37,7 +39,7 @@ class MainScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Text("Есть обновление. Скачать?"),
+          content: Text(description),
           actions: <Widget>[
             OutlinedButton(
               child: Text("Нет"),

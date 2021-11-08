@@ -67,7 +67,7 @@ class FilmDetails extends StatelessWidget {
                                 clipBehavior: Clip.antiAlias,
                                 fit: BoxFit.fitHeight,
                                 child: Image.network(
-                                  film.bigPoster,
+                                  film.bigPoster != '' ? film.bigPoster : film.poster,
                                   filterQuality: FilterQuality.high,
                                   alignment: Alignment.topLeft,
                                 ),
