@@ -15,7 +15,7 @@ import 'package:my_tv/widgets/showUpgradeDialog.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-  final ver = 20;
+  final ver = 21;
   String description = 'Есть обновление. Скачать?';
   static int focusedFilm = 0;
 
