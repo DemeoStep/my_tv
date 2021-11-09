@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:my_tv/screens/filmDetails.dart';
+import 'package:my_tv/screens/mainScreen.dart';
 import 'package:my_tv/searchResultsList.dart';
 
 class Result extends StatelessWidget {
@@ -21,6 +22,11 @@ class Result extends StatelessWidget {
         color: Colors.grey.shade900,
       ),
       child: OutlinedButton(
+        onFocusChange: (state) {
+          if (state) {
+            MainScreen.onFocus(index);
+          }
+        },
         style: OutlinedButton.styleFrom(
           primary: Colors.cyanAccent,
           padding: EdgeInsets.zero,
@@ -58,12 +64,6 @@ class Result extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,
-                          /* shadows: [
-                            Shadow(color: Colors.black, blurRadius: 3),
-                            Shadow(color: Colors.black, blurRadius: 3),
-                            Shadow(color: Colors.black, blurRadius: 3),
-                            Shadow(color: Colors.black, blurRadius: 3),
-                          ], */
                         ),
                       ),
                     ),
@@ -80,12 +80,6 @@ class Result extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
-                          /* shadows: [
-                            Shadow(color: Colors.black, blurRadius: 3),
-                            Shadow(color: Colors.black, blurRadius: 3),
-                            Shadow(color: Colors.black, blurRadius: 3),
-                            Shadow(color: Colors.black, blurRadius: 3),
-                          ], */
                         ),
                       ),
                     ),
@@ -96,12 +90,30 @@ class Result extends StatelessWidget {
                     margin: EdgeInsets.symmetric(horizontal: 5),
                     alignment: Alignment.centerLeft,
                     child: list[index].name.length > 11
-                        ? Marquee(
-                            startAfter: Duration(seconds: 5),
-                            text: list[index].name,
-                            blankSpace: 100,
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          )
+                        ? StreamBuilder<int>(
+                          stream: MainScreen.focused,
+                          builder: (context, snapshot) {
+                            var focused = snapshot.data;
+                            return focused == index
+                                ? Marquee(
+                                  startAfter: Duration(seconds: 0),
+                                  text: list[index].name,
+                                  blankSpace: 100,
+                                  style: TextStyle(color: Colors.white, fontSize: 20),
+                                )
+                            : Text(
+                              list[index].name,
+                              textAlign: TextAlign.left,
+                              maxLines: 1,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            );
+                          }
+                        )
                         : Text(
                             list[index].name,
                             textAlign: TextAlign.left,

@@ -3,19 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:my_tv/history.dart';
 import 'dart:convert';
 import 'package:my_tv/parsers/rezka.dart';
-import 'package:my_tv/screens/upgradeScreen.dart';
 import 'package:my_tv/searchResultsList.dart';
+import 'package:rxdart/rxdart.dart';
 import 'menu.dart';
 import 'package:my_tv/film.dart';
 import 'result.dart';
 import 'package:my_tv/my_http.dart';
 import 'package:download_assets/download_assets.dart';
+import 'package:my_tv/widgets/showUpgradeDialog.dart';
 
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
   final ver = 20;
-  String description = '';
+  String description = 'Есть обновление. Скачать?';
+  static int focusedFilm = 0;
+
+  static late BehaviorSubject<int> focused = BehaviorSubject<int>.seeded(focusedFilm);
+
+  static void onFocus(int focus) {
+    focusedFilm = focus;
+    focused.add(focus);
+  }
 
   Future<bool> checkUpdates() async {
     var response = await simpleHttp
@@ -26,41 +35,13 @@ class MainScreen extends StatelessWidget {
     int newVer = release['elements'][0]['versionCode'];
 
     if (newVer > ver) {
-      var descResponse = await simpleHttp.get(Uri.parse('http://demeo.euronet.dn.ua/mytv/update.txt'));
+      var descResponse = await simpleHttp
+          .get(Uri.parse('http://demeo.euronet.dn.ua/mytv/update.txt'));
       description = descResponse.body;
       return true;
     }
 
     return false;
-  }
-
-  void _showDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Text(description),
-          actions: <Widget>[
-            OutlinedButton(
-              child: Text("Нет"),
-              onPressed: () async {
-                Navigator.of(context).pop();
-              },
-            ),
-            OutlinedButton(
-              child: Text("Да"),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UpgradeScreen.newUp()));
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -71,15 +52,12 @@ class MainScreen extends StatelessWidget {
     checkUpdates().then((needUpgrade) {
       if (needUpgrade) {
         DownloadAssetsController.init();
-        _showDialog(context);
+        showUpgradeDialog(context: context, description: description);
       }
     });
 
     final aspectRatio = (((MediaQuery.of(context).size.height) /
-                    MediaQuery.of(context).size.width) *
-                100)
-            .ceil() /
-        100;
+                    MediaQuery.of(context).size.width) * 100).ceil() / 100;
 
     rezka.showNew(searchResult);
 
@@ -112,7 +90,11 @@ class MainScreen extends StatelessWidget {
                   stream: searchResult.onFilmAdd,
                   builder: (context, snapshot) {
                     var list = snapshot.data ?? [];
-                    if(Menu.index == 0 || Menu.index == 1 || Menu.index == 3 || Menu.index == 6 || Menu.index == 9) {
+                    if (Menu.index == 0 ||
+                        Menu.index == 1 ||
+                        Menu.index == 3 ||
+                        Menu.index == 6 ||
+                        Menu.index == 9) {
                       searchResult.sortList();
                     }
                     return GridView.builder(
