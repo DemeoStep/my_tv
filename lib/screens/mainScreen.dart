@@ -15,7 +15,7 @@ import 'package:my_tv/widgets/showUpgradeDialog.dart';
 class MainScreen extends StatelessWidget {
   final http = NetworkService();
   final searchResult = SearchResultsList.newSearch();
-  final ver = 21;
+  final ver = 23;
   String description = 'Есть обновление. Скачать?';
   static int focusedFilm = 0;
 
@@ -36,8 +36,8 @@ class MainScreen extends StatelessWidget {
 
     if (newVer > ver) {
       var descResponse = await simpleHttp
-          .get(Uri.parse('http://demeo.euronet.dn.ua/mytv/update.txt'));
-      description = descResponse.body;
+          .get(Uri.parse('http://demeo.euronet.dn.ua/mytv/update.txt'), headers: {'Content-Type' : 'text/html; charset=UTF-8'});
+      description = utf8.decode(descResponse.body.runes.toList());
       return true;
     }
 
