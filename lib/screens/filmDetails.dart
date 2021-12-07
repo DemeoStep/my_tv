@@ -282,10 +282,14 @@ class FilmDetails extends StatelessWidget {
           playlist: [urls.last.trim()],
           index: 0,
           filmName: film.name,
+          film: film,
           season: "",
         ),
       ),
-    );
+    ).then((value) {
+      History.changeProgress(film: film);
+    });
+
   }
 
   Future<void> getSeasonsCount(Translator translator) async {

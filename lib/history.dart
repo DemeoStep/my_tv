@@ -12,7 +12,17 @@ class History {
 
   static void addFilm({required Film film}) async {
     _viewed.add(ViewedFilm(film: film));
+    print(film.progress);
     await saveHistory();
+  }
+
+  static void changeProgress({required Film film}) async {
+    if(_viewed.contains(ViewedFilm(film: film))) {
+      _viewed.remove(ViewedFilm(film: film));
+      print("remove film from history");
+    }
+
+    addFilm(film: film);
   }
 
   static Future<String> get _localPath async {
@@ -55,7 +65,9 @@ class History {
   static void fromJson() async {
     var list = jsonDecode(await readHistory()) as List<dynamic>;
 
-    _viewed = list.map((dynamic e) => ViewedFilm.fromJson(e as Map<String, dynamic>)).toSet();
+    _viewed = await list.map((dynamic e) => ViewedFilm.fromJson(e as Map<String, dynamic>)).toSet();
+
+    printHistory();
 
   }
 
@@ -68,6 +80,7 @@ class ViewedFilm {
   var _url;
   var _poster;
   var _type;
+  var _progress;
 
   get url => _url;
   get name => _name;
@@ -75,6 +88,7 @@ class ViewedFilm {
   get year => _year;
   get poster => _poster;
   get type => _type;
+  get progress => _progress;
 
   ViewedFilm({required Film film}) {
     _name = film.name;
@@ -83,11 +97,12 @@ class ViewedFilm {
     _url = film.url;
     _poster = film.poster;
     _type = film.type;
+    _progress = film.progress;
   }
 
   @override
   String toString() {
-    return 'ViewedFilm{_name: $_name, _id: $_id, _year: $_year, _url: $_url, _poster: $_poster, _type: $_type}';
+    return 'ViewedFilm{_name: $_name, _id: $_id, _year: $_year, _url: $_url, _poster: $_poster, _type: $_type, _progress: $_progress}';
   }
 
   @override
@@ -108,6 +123,7 @@ class ViewedFilm {
       'url' : _url,
       'poster' : _poster,
       'type' : _type,
+      'progress' : _progress
     };
   }
 
@@ -120,6 +136,7 @@ class ViewedFilm {
     film.setUrl(json['url']);
     film.setPoster(json['poster']);
     film.setType(json['type']);
+    film.setProgress(json['progress'] ?? "00:00:00");
 
     return ViewedFilm(film: film);
   }

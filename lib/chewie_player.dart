@@ -5,6 +5,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:video_player/video_player.dart';
+import 'film.dart';
 import 'widgets/videoControls.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -20,10 +21,11 @@ class ChewiePlayer extends StatefulWidget {
   BehaviorSubject<bool> onPlay;
   bool isPlaying = true;
   int index;
+  Film film;
   String filmName;
   String season;
 
-  ChewiePlayer(this.isPlaying, {required this.playlist, required this.index, required this.filmName, required this.season}) : onPlay = BehaviorSubject<bool>.seeded(isPlaying);
+  ChewiePlayer(this.isPlaying, {required this.playlist, required this.index, required this.film, required this.filmName, required this.season}) : onPlay = BehaviorSubject<bool>.seeded(isPlaying);
 
   @override
   _ChewiePlayerState createState() => _ChewiePlayerState();
@@ -108,6 +110,7 @@ class _ChewiePlayerState extends State<ChewiePlayer> {
       var remaining = (videoPlayerController!.value.duration - videoPlayerController!.value.position).toString();
       controls.strProgress = progress.substring(0, progress.indexOf('.'));
       controls.strRemaining = remaining.substring(0, remaining.indexOf('.'));
+      widget.film.progressChange(progress.substring(0, progress.indexOf('.')));
     });
   }
 

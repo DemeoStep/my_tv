@@ -87,41 +87,54 @@ class Result extends StatelessWidget {
                 ]),
                 Expanded(
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 5),
-                    alignment: Alignment.centerLeft,
-                    child: list[index].name.length > 11
-                        ? StreamBuilder<int>(
-                          stream: MainScreen.focused,
-                          builder: (context, snapshot) {
-                            var focused = snapshot.data;
-                            return focused == index
-                                ? Marquee(
-                                  startAfter: Duration(seconds: 0),
-                                  text: list[index].name,
-                                  blankSpace: 100,
-                                  style: TextStyle(color: Colors.white, fontSize: 20),
-                                )
-                            : Text(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.grey.shade700,
+                            Colors.grey.shade800,
+                          ],
+                          stops: [0.9, 0.9], //percents
+                        ),
+                      ),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 5),
+                      alignment: Alignment.centerLeft,
+                      child: list[index].name.length > 11
+                          ? StreamBuilder<int>(
+                            stream: MainScreen.focused,
+                            builder: (context, snapshot) {
+                              var focused = snapshot.data;
+                              return focused == index
+                                  ? Marquee(
+                                    startAfter: Duration(seconds: 0),
+                                    text: list[index].name,
+                                    blankSpace: 100,
+                                    style: TextStyle(color: Colors.white, fontSize: 20),
+                                  )
+                              : Text(
+                                list[index].name,
+                                textAlign: TextAlign.left,
+                                maxLines: 1,
+                                softWrap: false,
+                                overflow: TextOverflow.fade,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              );
+                            }
+                          )
+                          : Text(
                               list[index].name,
                               textAlign: TextAlign.left,
-                              maxLines: 1,
-                              softWrap: false,
-                              overflow: TextOverflow.fade,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                               ),
-                            );
-                          }
-                        )
-                        : Text(
-                            list[index].name,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
                             ),
-                          ),
+                    ),
                   ),
                 ),
               ]),

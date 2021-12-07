@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tv/chewie_player.dart';
@@ -110,18 +109,6 @@ class SeasonsScreen extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [
-                            Colors.grey.shade700,
-                            Colors.grey.shade800,
-                          ],
-                          stops: [0.9, 0.9], //percents
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Colors.grey.withOpacity(0),
@@ -132,7 +119,7 @@ class SeasonsScreen extends StatelessWidget {
                         onPressed: () async {
                           await getEpisodes(season, 0, translator);
                           History.addFilm(film: film);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, filmName: film.name, season: (season + 1).toString(),)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ChewiePlayer(true, playlist: playlist, index: index, film: film, filmName: film.name, season: (season + 1).toString(),)));
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 15),
